@@ -2,9 +2,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
-#include "./emulador.h"
-#include "./emulador.c"
+#include "emulador.h"
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_native_dialog.h>
@@ -49,12 +49,12 @@ int main(int argc, char** argv) {
 
     al_init(); 
     ALLEGRO_DISPLAY* disp;
-    ALLEGRO_FONT* font;
+    ALLEGRO_FONT* Avenir20;
     ALLEGRO_BITMAP* textura[CANTTEXTURAS];
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
-    int aux;
-
-    
+    ALLEGRO_TIMER* timer = NULL;
+    uint16_t mascara = 0;
+   
     //Inicializamos los addon
     if(inicializarAllegro() == 1){
         return -1;
@@ -79,43 +79,13 @@ int main(int argc, char** argv) {
         return -1;
     }
     
-    ALLEGRO_FONT* Avenir20 = al_load_font("resources/fonts/Avenir_Next.ttc", 20, 0);
+    Avenir20 = al_load_font("resources/fonts/Avenir_Next.ttc", 20, 0);
     if (!Avenir20) {
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar las fuentes", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
-        al_destroy_font(font);
+        al_destroy_font(Avenir20);
         return -1;
      }
-    
-    //Pintamos el fondo
-    al_clear_to_color(al_map_rgb(181, 224, 186));
-    
-    //Dibujamos la interfaz de ususario
-    al_draw_bitmap(textura[CIRCUITO], CIRCUITOX, CIRCUITOY, 0);
-    
-    al_draw_bitmap(textura[PORTA_BUTTON_P],PUERTOAX, PUERTOAY, 0);
-    
-    al_draw_bitmap(textura[PORTB_BUTTON_NP], PUERTOAX + ANCHOPUERTOA, PUERTOAY, 0);
-    
-    al_draw_bitmap(textura[BITS_BUTTONS], BOTONBITSX, BOTONBITSY, 0);
-    
-    al_draw_bitmap(textura[C_BUTTON], BOTONCX, BOTONCY, 0);
-    
-    al_draw_bitmap(textura[E_BUTTON], BOTONCX, BOTONCY + DISTYBOTONESCE, 0);
-    
-    al_draw_bitmap(textura[P_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY, 0);
-            
-    al_draw_bitmap(textura[I_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY + DISTYBOTONESCE, 0);
-    
-    al_draw_bitmap(textura[Q_BUTTON], al_get_display_width(disp) - DISTYBOTONESCE, 10, 0);
-    
-    al_draw_text(Avenir20, al_map_rgb(0, 0, 0), BOTONCX + ANCHOBOTC + 10, BOTONCY + 9, 0, "Apagar");
-    al_draw_text(Avenir20, al_map_rgb(0, 0, 0), BOTONCX + ANCHOBOTC + 10, BOTONCY + DISTYBOTONESCE + 9, 0, "Encender");
-    al_draw_text(Avenir20, al_map_rgb(0, 0, 0), BOTONCX + DISTXBOTONESCE + ANCHOBOTC + 10, BOTONCY + 9, 0, "Parpadear");
-    al_draw_text(Avenir20, al_map_rgb(0, 0, 0), BOTONCX + DISTXBOTONESCE + ANCHOBOTC + 10, BOTONCY + DISTYBOTONESCE + 9, 0, "Invertir");
-
-   
-    al_flip_display();
     
     event_queue = al_create_event_queue();
     if (!event_queue) {
@@ -123,13 +93,15 @@ int main(int argc, char** argv) {
         return -1;
     }
     
+    timer = al_create_timer(1);
+    
     al_register_event_source(event_queue, al_get_display_event_source(disp));
     al_register_event_source(event_queue, al_get_keyboard_event_source());
+    al_register_event_source(event_queue, al_get_timer_event_source(timer));
     ALLEGRO_EVENT ev;
     
     int do_exit = 0;
-    maskOff(PUERTOD, 0xFFFF);
-    maskOn(PUERTOD, 0xFFF0);
+    maskOn(PUERTOD, 0xA0B1);
     while (!do_exit) {
 
         ActualizarDisplay(textura, disp, Avenir20);
@@ -148,16 +120,27 @@ int main(int argc, char** argv) {
                     case ALLEGRO_KEY_A:
                         PuertoSeleccionado = PUERTOA;
                         break;
+                    case ALLEGRO_KEY_P:
+                        if(al_get_timer_started(timer)){
+                            al_stop_timer(timer);
+                        }
+                        else{
+                            al_start_timer(timer);
+                        }
+                        break;
                 }
+                break;
+            case ALLEGRO_EVENT_TIMER:
+                mascara = (wordGet(PUERTOD) == 0) ? mascara : wordGet(PUERTOD);
+                maskToggle(PUERTOD, mascara);
+                break;
         }
         
     }
     
-    
-    
-    
-    al_destroy_font(font);
+    al_destroy_font(Avenir20);
     al_destroy_display(disp);
+    al_destroy_timer(timer);
     for(int i= 0; i < CANTTEXTURAS; i++){
         al_destroy_bitmap(textura[i]);
     }

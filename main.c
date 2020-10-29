@@ -10,6 +10,7 @@
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_audio.h>
 
 
 #define CANTTEXTURAS 16
@@ -53,6 +54,7 @@ int main(int argc, char** argv) {
     ALLEGRO_BITMAP* textura[CANTTEXTURAS];
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
     ALLEGRO_TIMER* timer = NULL;
+    ALLEGRO_SAMPLE* musiquita = NULL;
     uint16_t mascara = 0;
    
     //Inicializamos los addon
@@ -70,7 +72,8 @@ int main(int argc, char** argv) {
     
     //Cambiamos el nombre de la ventana
     al_set_window_title(disp, "Proyecto Micro");
-    
+    ALLEGRO_BITMAP* icono = al_load_bitmap("resources/textures/icono.png");
+    al_set_display_icon(disp, icono);
     
     //Cargamos las texturas
     if(cargarImagenes(textura) == 1){
@@ -87,6 +90,16 @@ int main(int argc, char** argv) {
         return -1;
      }
     
+    musiquita = al_load_sample("resources/music/Hedwig'stheme8-Bit.ogg");
+    if(!musiquita){
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar la musica", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        al_destroy_display(disp);
+        al_destroy_font(Avenir20);
+        al_destroy_sample(musiquita);
+        return -1;
+    }
+    al_reserve_samples(1);
+    
     event_queue = al_create_event_queue();
     if (!event_queue) {
         al_show_native_message_box(disp, "Error", "ERROR", "Error al generar cola de eventos", NULL, ALLEGRO_MESSAGEBOX_ERROR);
@@ -101,6 +114,7 @@ int main(int argc, char** argv) {
     ALLEGRO_EVENT ev;
     
     int do_exit = 0;
+    al_play_sample(musiquita, 1.0, 0, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL);
     maskOn(PUERTOD, 0xA0B1);
     while (!do_exit) {
 
@@ -141,7 +155,8 @@ int main(int argc, char** argv) {
     al_destroy_font(Avenir20);
     al_destroy_display(disp);
     al_destroy_timer(timer);
-    for(int i= 0; i < CANTTEXTURAS; i++){
+    al_destroy_sample(musiquita);
+    for(int i= 0; i <= CANTTEXTURAS; i++){
         al_destroy_bitmap(textura[i]);
     }
     
@@ -170,6 +185,12 @@ int inicializarAllegro(ALLEGRO_DISPLAY* disp){
         salida = 1;
     }
     
+    if(!al_init_acodec_addon())
+    {
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al iniciar addon de codec de audio", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        salida = 1;
+    }
+    
     if (!al_install_keyboard()) {
         al_show_native_message_box(disp, "Error", "ERROR", "Error al instalar el teclado", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
@@ -177,6 +198,11 @@ int inicializarAllegro(ALLEGRO_DISPLAY* disp){
     
     if (!al_install_mouse()) {
         al_show_native_message_box(disp, "Error", "ERROR", "Error al instalar el mouse", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        salida = 1;
+    }
+     
+    if (!al_install_audio()) {
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al instalar el audio", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
     }
   
@@ -190,7 +216,7 @@ int cargarImagenes(ALLEGRO_BITMAP *textura[]){
     char rutaEfectiva[30];
     int error = 0;
     
-    for(int i = 0; !error && i < CANTTEXTURAS; i++){
+    for(int i = 0; !error && i <= CANTTEXTURAS; i++){
         
         int size = sprintf(rutaEfectiva, "resources/textures/%d.png", i);
         textura[i] = al_load_bitmap(rutaEfectiva);
@@ -248,7 +274,7 @@ void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
     for (int i = 0; i < 16; i++){
         if(puerto%2 == 1){
             al_draw_bitmap(textura[GREEN_LED],LEDSUPX + CIRCUITOX, LEDSUPY + i*LEDSIZE + CIRCUITOY, 0);
-            al_draw_bitmap(textura[MICRO_RED_LED], MINILEDSUPDERX + CIRCUITOX, MINILEDSUPDERY + i*MINILEDSIZE + CIRCUITOY, 0);
+            al_draw_bitmap(textura[MICRO_YELLOW_LED], MINILEDSUPDERX + CIRCUITOX, MINILEDSUPDERY + i*MINILEDSIZE + CIRCUITOY, 0);
         }
         puerto /= 2;
     }

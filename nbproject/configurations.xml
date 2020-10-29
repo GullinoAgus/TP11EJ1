@@ -15,6 +15,9 @@
         <itemPath>resources/fonts/Avenir_Next.ttc</itemPath>
         <itemPath>resources/fonts/Pixellari.ttf</itemPath>
       </logicalFolder>
+      <logicalFolder name="f1" displayName="music" projectFiles="true">
+        <itemPath>resources/music/africa-toto.wav</itemPath>
+      </logicalFolder>
       <logicalFolder name="textures" displayName="textures" projectFiles="true">
         <itemPath>resources/textures/0.png</itemPath>
         <itemPath>resources/textures/1.png</itemPath>
@@ -103,6 +106,8 @@
       </item>
       <item path="resources/fonts/Pixellari.ttf" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="resources/music/africa-toto.wav" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="resources/textures/0.png" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/textures/1.png" ex="false" tool="3" flavor2="0">
@@ -181,6 +186,8 @@
       <item path="resources/fonts/Avenir_Next.ttc" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/fonts/Pixellari.ttf" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/music/africa-toto.wav" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/textures/0.png" ex="false" tool="3" flavor2="0">
       </item>

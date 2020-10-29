@@ -663,6 +663,8 @@ uint16_t wordGet(uint8_t puerto){
         case PUERTOD:
             word = puertoD.word;
             break;
+        default:
+            break;
     }
     return word;
 }

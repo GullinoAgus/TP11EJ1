@@ -8,25 +8,32 @@
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
+      <logicalFolder name="fonts" displayName="fonts" projectFiles="true">
+        <itemPath>resources/fonts/8-BIT-WONDER.TTF</itemPath>
+        <itemPath>resources/fonts/AvenirNextLTPro-Bold.otf</itemPath>
+        <itemPath>resources/fonts/Avenir_Next.ttc</itemPath>
+        <itemPath>resources/fonts/Pixellari.ttf</itemPath>
+      </logicalFolder>
       <logicalFolder name="textures" displayName="textures" projectFiles="true">
-        <itemPath>textures/C_button.bmp</itemPath>
-        <itemPath>textures/E_button.bmp</itemPath>
-        <itemPath>textures/I_button.bmp</itemPath>
-        <itemPath>textures/Q_button.bmp</itemPath>
-        <itemPath>textures/bits_buttons.bmp</itemPath>
-        <itemPath>textures/blue_led_on.bmp</itemPath>
-        <itemPath>textures/blue_top_light.bmp</itemPath>
-        <itemPath>textures/circuit_with_background.bmp</itemPath>
-        <itemPath>textures/green_led_on.bmp</itemPath>
-        <itemPath>textures/p_button.bmp</itemPath>
-        <itemPath>textures/portA_button1.bmp</itemPath>
-        <itemPath>textures/portA_button2.bmp</itemPath>
-        <itemPath>textures/portB_button1.bmp</itemPath>
-        <itemPath>textures/portB_button2.bmp</itemPath>
-        <itemPath>textures/red_top_light.bmp</itemPath>
-        <itemPath>textures/transparent_circuit.bmp</itemPath>
-        <itemPath>textures/yellow_led_on.bmp</itemPath>
-        <itemPath>textures/yellow_top_light.bmp</itemPath>
+        <itemPath>resources/textures/0.png</itemPath>
+        <itemPath>resources/textures/1.png</itemPath>
+        <itemPath>resources/textures/10.png</itemPath>
+        <itemPath>resources/textures/11.png</itemPath>
+        <itemPath>resources/textures/12.png</itemPath>
+        <itemPath>resources/textures/13.png</itemPath>
+        <itemPath>resources/textures/14.png</itemPath>
+        <itemPath>resources/textures/15.png</itemPath>
+        <itemPath>resources/textures/16.png</itemPath>
+        <itemPath>resources/textures/2.png</itemPath>
+        <itemPath>resources/textures/3.png</itemPath>
+        <itemPath>resources/textures/4.png</itemPath>
+        <itemPath>resources/textures/5.png</itemPath>
+        <itemPath>resources/textures/6.png</itemPath>
+        <itemPath>resources/textures/7.png</itemPath>
+        <itemPath>resources/textures/8.png</itemPath>
+        <itemPath>resources/textures/9.png</itemPath>
+        <itemPath>resources/textures/circuit_with_background.png</itemPath>
+        <itemPath>resources/textures/example.png</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
@@ -79,44 +86,57 @@
       </compileType>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="textures/C_button.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/fonts/8-BIT-WONDER.TTF" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/E_button.bmp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="textures/I_button.bmp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="textures/Q_button.bmp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="textures/bits_buttons.bmp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="textures/blue_led_on.bmp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="textures/blue_top_light.bmp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="textures/circuit_with_background.bmp"
+      <item path="resources/fonts/AvenirNextLTPro-Bold.otf"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="textures/green_led_on.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/fonts/Avenir_Next.ttc" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/p_button.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/fonts/Pixellari.ttf" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/portA_button1.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/0.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/portA_button2.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/1.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/portB_button1.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/10.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/portB_button2.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/11.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/red_top_light.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/12.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/transparent_circuit.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/13.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/yellow_led_on.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/14.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/yellow_top_light.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/15.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/16.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/2.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/3.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/4.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/5.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/6.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/7.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/8.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/9.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/circuit_with_background.png"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="resources/textures/example.png" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -141,44 +161,57 @@
       </compileType>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="textures/C_button.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/fonts/8-BIT-WONDER.TTF" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/E_button.bmp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="textures/I_button.bmp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="textures/Q_button.bmp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="textures/bits_buttons.bmp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="textures/blue_led_on.bmp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="textures/blue_top_light.bmp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="textures/circuit_with_background.bmp"
+      <item path="resources/fonts/AvenirNextLTPro-Bold.otf"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="textures/green_led_on.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/fonts/Avenir_Next.ttc" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/p_button.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/fonts/Pixellari.ttf" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/portA_button1.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/0.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/portA_button2.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/1.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/portB_button1.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/10.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/portB_button2.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/11.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/red_top_light.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/12.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/transparent_circuit.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/13.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/yellow_led_on.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/14.png" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="textures/yellow_top_light.bmp" ex="false" tool="3" flavor2="0">
+      <item path="resources/textures/15.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/16.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/2.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/3.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/4.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/5.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/6.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/7.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/8.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/9.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/circuit_with_background.png"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="resources/textures/example.png" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

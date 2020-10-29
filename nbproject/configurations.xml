@@ -28,6 +28,8 @@
         <itemPath>resources/textures/14.png</itemPath>
         <itemPath>resources/textures/15.png</itemPath>
         <itemPath>resources/textures/16.png</itemPath>
+        <itemPath>resources/textures/17.png</itemPath>
+        <itemPath>resources/textures/18.png</itemPath>
         <itemPath>resources/textures/2.png</itemPath>
         <itemPath>resources/textures/3.png</itemPath>
         <itemPath>resources/textures/4.png</itemPath>
@@ -126,6 +128,10 @@
       </item>
       <item path="resources/textures/16.png" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="resources/textures/17.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/18.png" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="resources/textures/2.png" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/textures/3.png" ex="false" tool="3" flavor2="0">
@@ -206,6 +212,10 @@
       <item path="resources/textures/15.png" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/textures/16.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/17.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/18.png" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/textures/2.png" ex="false" tool="3" flavor2="0">
       </item>

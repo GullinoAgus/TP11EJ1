@@ -11,9 +11,10 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 
 
-#define CANTTEXTURAS 16
+#define CANTTEXTURAS 18
 #define CIRCUITOX 20
 #define CIRCUITOY 80
 #define PUERTOAX 465
@@ -36,15 +37,19 @@
 #define MINILEDSUPDERX 272
 #define MINILEDSUPDERY 38
 #define MINILEDSIZE 14
+#define SOUNDICNX 20
+#define SOUNDICNY 20
 
 enum textura_id {CIRCUITO = 0, Q_BUTTON, E_BUTTON, I_BUTTON, P_BUTTON, C_BUTTON, BITS_BUTTONS, BLUE_LED, YELLOW_LED, 
-                 GREEN_LED, PORTA_BUTTON_NP, PORTA_BUTTON_P, PORTB_BUTTON_NP, PORTB_BUTTON_P, MICRO_BLUE_LED, MICRO_RED_LED, MICRO_YELLOW_LED};
+                 GREEN_LED, PORTA_BUTTON_NP, PORTA_BUTTON_P, PORTB_BUTTON_NP, PORTB_BUTTON_P, MICRO_BLUE_LED,
+                 MICRO_RED_LED, MICRO_YELLOW_LED, SOUND_ON, SOUND_OFF};
 
 int cargarImagenes(ALLEGRO_BITMAP *textura[]);
 int inicializarAllegro();
-void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font);
+void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor);
 
 char PuertoSeleccionado = PUERTOA;
+char mute = 0;
 
 int main(int argc, char** argv) {
 
@@ -89,7 +94,7 @@ int main(int argc, char** argv) {
         al_destroy_font(Avenir20);
         return -1;
      }
-    
+    al_reserve_samples(1);
     musiquita = al_load_sample("resources/music/Hedwig'stheme8-Bit.ogg");
     if(!musiquita){
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar la musica", NULL, ALLEGRO_MESSAGEBOX_ERROR);
@@ -98,7 +103,8 @@ int main(int argc, char** argv) {
         al_destroy_sample(musiquita);
         return -1;
     }
-    al_reserve_samples(1);
+    ALLEGRO_SAMPLE_INSTANCE* reproductor = al_create_sample_instance(musiquita);
+    al_attach_sample_instance_to_mixer(reproductor, al_get_default_mixer());
     
     event_queue = al_create_event_queue();
     if (!event_queue) {
@@ -110,21 +116,25 @@ int main(int argc, char** argv) {
     
     al_register_event_source(event_queue, al_get_display_event_source(disp));
     al_register_event_source(event_queue, al_get_keyboard_event_source());
+    al_register_event_source(event_queue, al_get_mouse_event_source());
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     ALLEGRO_EVENT ev;
     
     int do_exit = 0;
-    al_play_sample(musiquita, 1.0, 0, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL);
     maskOn(PUERTOD, 0xA0B1);
     while (!do_exit) {
 
-        ActualizarDisplay(textura, disp, Avenir20);
+        ActualizarDisplay(textura, disp, Avenir20, reproductor);
         
         al_wait_for_event(event_queue, &ev); //Toma un evento de la cola, VER RETURN EN DOCUMENT.
         
         switch(ev.type){
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 do_exit = 1;
+                break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                if((ev.mouse.button == 1) && (ev.mouse.x <= (SOUNDICNX + 36) && ev.mouse.x >= SOUNDICNX && ev.mouse.y <= (SOUNDICNY + 36) && ev.mouse.y >= SOUNDICNY))
+                        mute = !mute;
                 break;
             case ALLEGRO_EVENT_KEY_DOWN:
                 switch (ev.keyboard.keycode){
@@ -232,7 +242,7 @@ int cargarImagenes(ALLEGRO_BITMAP *textura[]){
 }
 
 
-void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font){
+void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor){
     
     al_clear_to_color(al_map_rgb(181, 224, 186));
     
@@ -279,6 +289,14 @@ void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
         puerto /= 2;
     }
     
+    if(mute == 1){
+        al_draw_bitmap(textura[18], SOUNDICNX, SOUNDICNY, 0);
+        al_set_sample_instance_playing(reproductor, false);
+    }
+    else{
+        al_draw_bitmap(textura[17], SOUNDICNX, SOUNDICNY, 0);
+        al_set_sample_instance_playing(reproductor, true);
+    }
     
     al_flip_display();
 }

@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "./emulador.h"
+#include "./emulador.c"
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_native_dialog.h>
@@ -15,6 +17,8 @@
 #define CIRCUITOY 80
 #define PUERTOAX 465
 #define PUERTOAY 100
+#define ANCHOPUERTOA 174
+#define ALTOPUERTOA 49
 #define BOTONBITSX 488
 #define BOTONBITSY 200
 #define BOTONCX 488
@@ -23,12 +27,23 @@
 #define ALTOBOTC 49
 #define DISTYBOTONESCE 60
 #define DISTXBOTONESCE 163
+#define LEDSUPX 380
+#define LEDSUPY 34
+#define LEDSIZE 14
+#define MINILEDSUPIZQX 166
+#define MINILEDSUPIZQY 38
+#define MINILEDSUPDERX 272
+#define MINILEDSUPDERY 38
+#define MINILEDSIZE 14
 
-enum textura_id {CIRCUITO, Q_BUTTON, E_BUTTON, I_BUTTON, P_BUTTON, C_BUTTON, BITS_BUTTONS, BLUE_LED, YELLOW_LED, 
+enum textura_id {CIRCUITO = 0, Q_BUTTON, E_BUTTON, I_BUTTON, P_BUTTON, C_BUTTON, BITS_BUTTONS, BLUE_LED, YELLOW_LED, 
                  GREEN_LED, PORTA_BUTTON_NP, PORTA_BUTTON_P, PORTB_BUTTON_NP, PORTB_BUTTON_P, MICRO_BLUE_LED, MICRO_RED_LED, MICRO_YELLOW_LED};
 
 int cargarImagenes(ALLEGRO_BITMAP *textura[]);
 int inicializarAllegro();
+void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font);
+
+char PuertoSeleccionado = PUERTOA;
 
 int main(int argc, char** argv) {
 
@@ -42,7 +57,7 @@ int main(int argc, char** argv) {
     
     //Inicializamos los addon
     if(inicializarAllegro() == 1){
-        return 1;
+        return -1;
     }
     
     //Creamos el display
@@ -64,16 +79,23 @@ int main(int argc, char** argv) {
         return -1;
     }
     
+    ALLEGRO_FONT* Avenir20 = al_load_font("resources/fonts/Avenir_Next.ttc", 20, 0);
+    if (!Avenir20) {
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar las fuentes", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        al_destroy_display(disp);
+        al_destroy_font(font);
+        return -1;
+     }
+    
     //Pintamos el fondo
     al_clear_to_color(al_map_rgb(181, 224, 186));
     
     //Dibujamos la interfaz de ususario
     al_draw_bitmap(textura[CIRCUITO], CIRCUITOX, CIRCUITOY, 0);
     
-    al_draw_bitmap(textura[PORTA_BUTTON_NP], PUERTOAX, PUERTOAY, 0);
-
-    aux = al_get_bitmap_width(textura[PORTA_BUTTON_NP]);
-    al_draw_bitmap(textura[PORTB_BUTTON_NP], PUERTOAX + aux, PUERTOAY, 0);
+    al_draw_bitmap(textura[PORTA_BUTTON_P],PUERTOAX, PUERTOAY, 0);
+    
+    al_draw_bitmap(textura[PORTB_BUTTON_NP], PUERTOAX + ANCHOPUERTOA, PUERTOAY, 0);
     
     al_draw_bitmap(textura[BITS_BUTTONS], BOTONBITSX, BOTONBITSY, 0);
     
@@ -86,15 +108,6 @@ int main(int argc, char** argv) {
     al_draw_bitmap(textura[I_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY + DISTYBOTONESCE, 0);
     
     al_draw_bitmap(textura[Q_BUTTON], al_get_display_width(disp) - DISTYBOTONESCE, 10, 0);
-    
-    
-    ALLEGRO_FONT* Avenir20 = al_load_font("resources/fonts/Avenir_Next.ttc", 20, 0);
-    if (!Avenir20) {
-        al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar las fuentes", NULL, ALLEGRO_MESSAGEBOX_ERROR);
-        al_destroy_display(disp);
-        al_destroy_font(font);
-        return -1;
-     }
     
     al_draw_text(Avenir20, al_map_rgb(0, 0, 0), BOTONCX + ANCHOBOTC + 10, BOTONCY + 9, 0, "Apagar");
     al_draw_text(Avenir20, al_map_rgb(0, 0, 0), BOTONCX + ANCHOBOTC + 10, BOTONCY + DISTYBOTONESCE + 9, 0, "Encender");
@@ -115,9 +128,12 @@ int main(int argc, char** argv) {
     ALLEGRO_EVENT ev;
     
     int do_exit = 0;
-    
+    maskOff(PUERTOD, 0xFFFF);
+    maskOn(PUERTOD, 0xFFF0);
     while (!do_exit) {
 
+        ActualizarDisplay(textura, disp, Avenir20);
+        
         al_wait_for_event(event_queue, &ev); //Toma un evento de la cola, VER RETURN EN DOCUMENT.
         
         switch(ev.type){
@@ -125,7 +141,14 @@ int main(int argc, char** argv) {
                 do_exit = 1;
                 break;
             case ALLEGRO_EVENT_KEY_DOWN:
-                do_exit = 1;
+                switch (ev.keyboard.keycode){
+                    case ALLEGRO_KEY_B:
+                        PuertoSeleccionado = PUERTOB;
+                        break;
+                    case ALLEGRO_KEY_A:
+                        PuertoSeleccionado = PUERTOA;
+                        break;
+                }
         }
         
     }
@@ -192,4 +215,56 @@ int cargarImagenes(ALLEGRO_BITMAP *textura[]){
     }
     
     return error;
+}
+
+
+void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font){
+    
+    al_clear_to_color(al_map_rgb(181, 224, 186));
+    
+    al_draw_bitmap(textura[CIRCUITO], CIRCUITOX, CIRCUITOY, 0);
+
+    al_draw_bitmap(textura[BITS_BUTTONS], BOTONBITSX, BOTONBITSY, 0);
+    
+    al_draw_bitmap(textura[C_BUTTON], BOTONCX, BOTONCY, 0);
+    
+    al_draw_bitmap(textura[E_BUTTON], BOTONCX, BOTONCY + DISTYBOTONESCE, 0);
+    
+    al_draw_bitmap(textura[P_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY, 0);
+            
+    al_draw_bitmap(textura[I_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY + DISTYBOTONESCE, 0);
+    
+    al_draw_bitmap(textura[Q_BUTTON], al_get_display_width(disp) - DISTYBOTONESCE, 10, 0);
+    
+    al_draw_bitmap(textura[MICRO_BLUE_LED], MINILEDSUPIZQX + CIRCUITOX, MINILEDSUPIZQY + 2*MINILEDSIZE + CIRCUITOY, 0);
+    
+    al_draw_text(font, al_map_rgb(0, 0, 0), BOTONCX + ANCHOBOTC + 10, BOTONCY + 9, 0, "Apagar");
+    
+    al_draw_text(font, al_map_rgb(0, 0, 0), BOTONCX + ANCHOBOTC + 10, BOTONCY + DISTYBOTONESCE + 9, 0, "Encender");
+    
+    al_draw_text(font, al_map_rgb(0, 0, 0), BOTONCX + DISTXBOTONESCE + ANCHOBOTC + 10, BOTONCY + 9, 0, "Parpadear");
+    
+    al_draw_text(font, al_map_rgb(0, 0, 0), BOTONCX + DISTXBOTONESCE + ANCHOBOTC + 10, BOTONCY + DISTYBOTONESCE + 9, 0, "Invertir");
+    
+    if (PuertoSeleccionado == PUERTOA){
+        al_draw_bitmap(textura[PORTA_BUTTON_P],PUERTOAX, PUERTOAY, 0);
+        al_draw_bitmap(textura[PORTB_BUTTON_NP], PUERTOAX + ANCHOPUERTOA, PUERTOAY, 0);
+    }
+    else if (PuertoSeleccionado == PUERTOB){
+        al_draw_bitmap(textura[PORTA_BUTTON_NP],PUERTOAX, PUERTOAY, 0);
+        al_draw_bitmap(textura[PORTB_BUTTON_P], PUERTOAX + ANCHOPUERTOA, PUERTOAY, 0);
+    }
+    
+    uint16_t puerto = wordGet(PUERTOD);
+    
+    for (int i = 0; i < 16; i++){
+        if(puerto%2 == 1){
+            al_draw_bitmap(textura[GREEN_LED],LEDSUPX + CIRCUITOX, LEDSUPY + i*LEDSIZE + CIRCUITOY, 0);
+            al_draw_bitmap(textura[MICRO_RED_LED], MINILEDSUPDERX + CIRCUITOX, MINILEDSUPDERY + i*MINILEDSIZE + CIRCUITOY, 0);
+        }
+        puerto /= 2;
+    }
+    
+    
+    al_flip_display();
 }

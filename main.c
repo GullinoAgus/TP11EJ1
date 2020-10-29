@@ -148,30 +148,35 @@ int main(int argc, char** argv) {
     return (EXIT_SUCCESS);
 }
 
-int inicializarAllegro(){
+int inicializarAllegro(ALLEGRO_DISPLAY* disp){
     
     int salida = 0;
     
     if(!al_init_image_addon())
     {
-        printf("couldn't initialize image addon\n");
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al iniciar addon de imagenes", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
     }
     
     if(!al_init_font_addon())
     {
-        printf("couldn't initialize image addon\n");
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al iniciar addon fuentes", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
     }
     
     if(!al_init_ttf_addon())
     {
-        printf("couldn't initialize image addon\n");
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al iniciar addon de lectura de fuentes", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
     }
     
     if (!al_install_keyboard()) {
-        fprintf(stderr, "failed to initialize the keyboard!\n");
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al instalar el teclado", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        salida = 1;
+    }
+    
+    if (!al_install_mouse()) {
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al instalar el mouse", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
     }
   

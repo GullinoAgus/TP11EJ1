@@ -16,7 +16,7 @@ enum MYKEYS {
 char active_port = 'A';
 
 int main(int argc, char** argv) {
-/*
+
     al_init(); 
     ALLEGRO_DISPLAY* disp = al_create_display(850,480);
     ALLEGRO_BITMAP* textura[MAXTEXTURES];
@@ -46,8 +46,9 @@ int main(int argc, char** argv) {
     al_destroy_bitmap(textura[0]);
 
     
-    return (EXIT_SUCCESS);*/
+    return (EXIT_SUCCESS);
     
+    /* a partir de aca es lo que agrego alvaro sobre el teclado
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
     ALLEGRO_TIMER *timer = NULL;
     
@@ -254,5 +255,5 @@ int main(int argc, char** argv) {
     }
 
     al_destroy_timer(timer);
-    return 0;
+    return 0;*/
 }

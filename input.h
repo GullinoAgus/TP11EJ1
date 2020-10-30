@@ -72,6 +72,22 @@ KEY_Q, KEY_E, KEY_P, KEY_C, KEY_I, KEY_A, KEY_B
 #define HITBOXBIT7(x,y) (((x) >= BOTONBITSX+7*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+8*LADODEUNBIT+7*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
 
 
+typedef struct{
+    
+    bool botQ;
+    bool botP;
+    bool botI;
+    bool botE;
+    bool botC;
+    bool botPortA;
+    bool botPortB;
+    bool botBits;
+    bool botMute;
+    
+} botones_t;
+
+extern botones_t Botoncitos;
+
 int mouseChanges(int evMouseX, int evMouseY, ALLEGRO_SAMPLE* click);
 int keyboardChanges (bool accion, int tecla);
 void setSelectedPort(char puerto);

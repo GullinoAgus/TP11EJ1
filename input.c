@@ -11,6 +11,8 @@ static bool mute = 0;
 
 
 
+botones_t Botoncitos = {true, true, true, true, true, true, true, true, true}; 
+
 int mouseChanges(int evMouseX, int evMouseY, ALLEGRO_SAMPLE* click){
     
     int salida = 0;

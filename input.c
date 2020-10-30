@@ -127,7 +127,7 @@ int keyboardChanges (bool accion, int tecla){
 
             case ALLEGRO_KEY_Q:
                 if(key_pressed[KEY_Q] == false)
-                    salida=-1;
+                    salida=2;
                 key_pressed[KEY_Q] = true;
                 break;
 
@@ -139,7 +139,7 @@ int keyboardChanges (bool accion, int tecla){
 
             case ALLEGRO_KEY_P:
                 key_pressed[KEY_P] = true;
-                salida=-2;
+                salida=1;
                 break;
 
             case ALLEGRO_KEY_C:

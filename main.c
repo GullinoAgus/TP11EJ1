@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
     ALLEGRO_SAMPLE* musiquita = NULL;
     ALLEGRO_SAMPLE* click = NULL;
     uint16_t mascara = 0;
-    int mouseAction = 0;
+    int accion = 0;
     int check = 0;
    
     //Inicializamos los addon
@@ -136,25 +136,15 @@ int main(int argc, char** argv) {
                 break;
             case ALLEGRO_EVENT_KEY_DOWN:
                 check=keyboardChanges (false, ev.keyboard.keycode);
-                if(check==-1)
-                    do_exit=1;
-                if(check==-2) {
-                    if(al_get_timer_started(timer)){
-                        al_stop_timer(timer);
-                    }
-                    else{
-                        al_start_timer(timer);
-                }
-                }
-                
-                
+                break;
             case ALLEGRO_EVENT_KEY_UP:   
                 keyboardChanges (true, ev.keyboard.keycode);
                 break;
             case ALLEGRO_EVENT_TIMER:
                 if(wordGet(PUERTOD) == 0){
                     maskOn(PUERTOD, mascara);
-                }else{
+                }
+                else{
                     maskOff(PUERTOD, mascara);
                 }
                 break;
@@ -163,27 +153,24 @@ int main(int argc, char** argv) {
                 break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                 if ( ev.mouse.button & 1){   //Solo si se presiono el click izquierdo
-                    
-                    mouseAction = mouseChanges(ev.mouse.x, ev.mouse.y, click);
-                    mascara = mascara | wordGet(PUERTOD);
-                }
-                if (mouseAction == 1 && wordGet(PUERTOD)){
-                    
-                    if(al_get_timer_started(timer)){
-                            al_stop_timer(timer);
-                            mascara = 0;
-                        }
-                        else{
-                            al_start_timer(timer);
-                        }
-                        
-                }
-                else if(mouseAction == 2){
-                    do_exit = 1;
+                    accion = mouseChanges(ev.mouse.x, ev.mouse.y, click);
                 }
                 break;
         }
-        
+        if (accion == 1 && wordGet(PUERTOD)){
+                    
+            if(al_get_timer_started(timer)){
+                al_stop_timer(timer);
+                mascara = 0;
+            }
+            else{
+                al_start_timer(timer);
+            }        
+        }
+        else if(accion == 2){
+            do_exit = 1;
+        }
+        mascara = mascara | wordGet(PUERTOD);
     }
     
     al_destroy_font(Avenir20);

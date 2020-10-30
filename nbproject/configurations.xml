@@ -5,7 +5,7 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>emulador.h</itemPath>
-      <itemPath>mouse.h</itemPath>
+      <itemPath>input.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -48,8 +48,8 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>emulador.c</itemPath>
+      <itemPath>input.c</itemPath>
       <itemPath>main.c</itemPath>
-      <itemPath>mouse.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -98,11 +98,11 @@
       </item>
       <item path="emulador.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="input.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="input.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="mouse.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="mouse.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/fonts/8-BIT-WONDER.TTF" ex="false" tool="3" flavor2="0">
       </item>
@@ -192,11 +192,11 @@
       </item>
       <item path="emulador.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="input.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="input.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="mouse.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="mouse.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/fonts/8-BIT-WONDER.TTF" ex="false" tool="3" flavor2="0">
       </item>

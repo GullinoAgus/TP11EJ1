@@ -4,14 +4,12 @@
  * and open the template in the editor.
  */
 
-#include "mouse.h"
+#include "input.h"
 
 static char PuertoSeleccionado = PUERTOA;
 static bool mute = 0;
 
 int mouseChanges(int evMouseX, int evMouseY, ALLEGRO_SAMPLE* click){
-    
- //   printf("x=%d , y=%d\n", evMouseX, evMouseY);  DEBUG
     
     int salida = 0;
     

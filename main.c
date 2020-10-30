@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "emulador.h"
-#include "mouse.h"
+#include "input.h"
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_native_dialog.h>
@@ -29,6 +29,7 @@ int main(int argc, char** argv) {
     ALLEGRO_DISPLAY* disp;
     ALLEGRO_FONT* Avenir20;
     ALLEGRO_BITMAP* textura[CANTTEXTURAS];
+    ALLEGRO_BITMAP* icono = NULL;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
     ALLEGRO_TIMER* timer = NULL;
     ALLEGRO_SAMPLE* musiquita = NULL;
@@ -51,9 +52,10 @@ int main(int argc, char** argv) {
     
     //Cambiamos el nombre de la ventana
     al_set_window_title(disp, "Proyecto Micro");
-    ALLEGRO_BITMAP* icono = al_load_bitmap("resources/textures/icono.png");
-    al_set_display_icon(disp, icono);
-    
+    icono = al_load_bitmap("resources/textures/icono.png");
+    if(icono){
+        al_set_display_icon(disp, icono);
+    }
     //Cargamos las texturas
     if(cargarImagenes(textura) == 1){
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar las texturas", NULL, ALLEGRO_MESSAGEBOX_ERROR);
@@ -139,7 +141,7 @@ int main(int argc, char** argv) {
                 maskToggle(PUERTOD, mascara);
                 break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                al_play_sample(click, 2, 0 ,1 , ALLEGRO_PLAYMODE_ONCE, NULL);
+                al_play_sample(click, 2, 0 ,1.5 , ALLEGRO_PLAYMODE_ONCE, NULL);
                 break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                 if ( (ev.mouse.button & 2) == 0){   //Solo si se presiono el click izquierdo
@@ -167,8 +169,11 @@ int main(int argc, char** argv) {
     
     al_destroy_font(Avenir20);
     al_destroy_display(disp);
+    al_destroy_event_queue(event_queue);
     al_destroy_timer(timer);
     al_destroy_sample(musiquita);
+    al_destroy_sample(click);
+    al_destroy_bitmap(icono);
     for(int i= 0; i <= CANTTEXTURAS; i++){
         al_destroy_bitmap(textura[i]);
     }

@@ -1,5 +1,5 @@
-build/Debug/GNU-Linux/main.o: main.c emulador.h mouse.h
+build/Debug/GNU-Linux/main.o: main.c emulador.h input.h
 
 emulador.h:
 
-mouse.h:
+input.h:

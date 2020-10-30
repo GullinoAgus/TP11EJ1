@@ -5,14 +5,14 @@
  */
 
 /* 
- * File:   mouse.h
- * Author: damian
+ * File:   input.h
+ * Author: grupo1
  *
  * Created on 29 de octubre de 2020, 19:22
  */
 
-#ifndef MOUSE_H
-#define MOUSE_H
+#ifndef INPUT_H
+#define INPUT_H
 
 #include "emulador.h"
 #include <stdbool.h>
@@ -54,9 +54,7 @@ void setSelectedPort(char puerto);
 char getSelectedPort(void);
 void setMute(bool modo);
 bool getMute(void);
-//DEVUELVE 0 SI HACE EL CAMBIO SIN HACER NADA
-//DEVUELVE 1 SI PONE A PARPADEAR A LOS BITS
-//DEVUELVE 2 SI TERMINA EL PROGRAMA
 
-#endif /* MOUSE_H */
+
+#endif /* INPUT_H */
 

@@ -36,6 +36,7 @@ int main(int argc, char** argv) {
     ALLEGRO_SAMPLE* click = NULL;
     uint16_t mascara = 0;
     int mouseAction = 0;
+    int check = 0;
    
     //Inicializamos los addon
     if(inicializarAllegro() == 1){
@@ -95,6 +96,15 @@ int main(int argc, char** argv) {
         al_destroy_sample(click);
         return -1;
     }
+    
+    if (!al_install_keyboard()) {
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar el teclado", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        al_destroy_display(disp);
+        al_destroy_font(Avenir20);
+        al_destroy_sample(musiquita);
+        al_destroy_sample(click);
+        return -1;
+    }
     ALLEGRO_SAMPLE_INSTANCE* reproductor = al_create_sample_instance(musiquita);
     al_attach_sample_instance_to_mixer(reproductor, al_get_default_mixer());
     
@@ -125,22 +135,21 @@ int main(int argc, char** argv) {
                 do_exit = 1;
                 break;
             case ALLEGRO_EVENT_KEY_DOWN:
-                switch (ev.keyboard.keycode){
-                    case ALLEGRO_KEY_B:
-                        setSelectedPort(PUERTOB);
-                        break;
-                    case ALLEGRO_KEY_A:
-                        setSelectedPort(PUERTOA);
-                        break;
-                    case ALLEGRO_KEY_P:
-                        if(al_get_timer_started(timer)){
-                            al_stop_timer(timer);
-                        }
-                        else{
-                            al_start_timer(timer);
-                        }
-                        break;
+                check=keyboardChanges (false, ev.keyboard.keycode);
+                if(check==-1)
+                    do_exit=1;
+                if(check==-2) {
+                    if(al_get_timer_started(timer)){
+                        al_stop_timer(timer);
+                    }
+                    else{
+                        al_start_timer(timer);
                 }
+                }
+                
+                
+            case ALLEGRO_EVENT_KEY_UP:   
+                keyboardChanges (true, ev.keyboard.keycode);
                 break;
             case ALLEGRO_EVENT_TIMER:
                 mascara = (wordGet(PUERTOD) == 0) ? mascara : wordGet(PUERTOD);

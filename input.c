@@ -117,6 +117,169 @@ int mouseChanges(int evMouseX, int evMouseY, ALLEGRO_SAMPLE* click){
     return salida;
 }
 
+int keyboardChanges (bool accion, int tecla){
+    
+    bool key_pressed[15] = { 0 };
+    int salida=0;
+            
+    if(accion == false) {
+        switch(tecla) {
+            case ALLEGRO_KEY_0:
+                if(key_pressed[KEY_0] == false)
+                    bitSet(PuertoSeleccionado,0);
+                key_pressed[KEY_0] = true;
+                break;
+
+            case ALLEGRO_KEY_1:
+                if(key_pressed[KEY_1] == false)
+                    bitSet(PuertoSeleccionado,1);
+                key_pressed[KEY_1] = true;
+                break;
+
+            case ALLEGRO_KEY_2:
+                if(key_pressed[KEY_2] == false)
+                    bitSet(PuertoSeleccionado,2);
+                key_pressed[KEY_2] = true;
+                break;
+
+            case ALLEGRO_KEY_3:
+                if(key_pressed[KEY_3] == false)
+                    bitSet(PuertoSeleccionado,3);
+                key_pressed[KEY_3] = true;
+                break;
+
+            case ALLEGRO_KEY_4:
+                if(key_pressed[KEY_4] == false)
+                    bitSet(PuertoSeleccionado,4);
+                key_pressed[KEY_4] = true;
+                break;
+
+            case ALLEGRO_KEY_5:
+                if(key_pressed[KEY_5] == false)
+                    bitSet(PuertoSeleccionado,5);
+                key_pressed[KEY_5] = true;
+                break;
+
+            case ALLEGRO_KEY_6:
+                if(key_pressed[KEY_6] == false)
+                    bitSet(PuertoSeleccionado,6);
+                key_pressed[KEY_6] = true;
+                break;
+
+            case ALLEGRO_KEY_7:
+                if(key_pressed[KEY_7] == false)
+                    bitSet(PuertoSeleccionado,7);
+                key_pressed[KEY_7] = true;
+                break;
+
+            case ALLEGRO_KEY_Q:
+                if(key_pressed[KEY_Q] == false)
+                    salida=-1;
+                key_pressed[KEY_Q] = true;
+                break;
+
+            case ALLEGRO_KEY_S:
+                if(key_pressed[KEY_S] == false)
+                    maskOn(PuertoSeleccionado,255);
+                key_pressed[KEY_S] = true;
+                break;
+
+            case ALLEGRO_KEY_P:
+                key_pressed[KEY_P] = true;
+                salida=-2;
+                break;
+
+            case ALLEGRO_KEY_C:
+                if(key_pressed[KEY_C] == false)
+                    maskOff(PuertoSeleccionado,255);
+                key_pressed[KEY_C] = true;
+                break;
+
+            case ALLEGRO_KEY_T:
+                if(key_pressed[KEY_T] == false)
+                    maskToggle(PuertoSeleccionado,255);
+                key_pressed[KEY_T] = true;
+                break;
+
+            case ALLEGRO_KEY_A:
+                if(key_pressed[KEY_A] == false)
+                    setSelectedPort(PUERTOA);
+                key_pressed[KEY_A] = true;
+                break;
+
+            case ALLEGRO_KEY_B:
+                if(key_pressed[KEY_B] == false)
+                    setSelectedPort(PUERTOB);
+                key_pressed[KEY_B] = true;
+                break;
+        }
+    }
+    else {
+        switch(tecla) {
+            case ALLEGRO_KEY_0:
+                key_pressed[KEY_0] = false;
+                break;
+
+            case ALLEGRO_KEY_1:
+                key_pressed[KEY_1] = false;
+                break;
+
+            case ALLEGRO_KEY_2:
+                key_pressed[KEY_2] = false;
+                break;
+
+            case ALLEGRO_KEY_3:
+                key_pressed[KEY_3] = false;
+                break;
+
+            case ALLEGRO_KEY_4:
+                key_pressed[KEY_4] = false;
+                break;
+
+            case ALLEGRO_KEY_5:
+                key_pressed[KEY_5] = false;
+                break;
+
+            case ALLEGRO_KEY_6:
+                key_pressed[KEY_6] = false;
+                break;
+
+            case ALLEGRO_KEY_7:
+                key_pressed[KEY_7] = false;
+                break;
+
+            case ALLEGRO_KEY_Q:
+                key_pressed[KEY_Q] = false;
+                break;
+
+            case ALLEGRO_KEY_S:
+                key_pressed[KEY_S] = false;
+                break;
+
+            case ALLEGRO_KEY_P:
+                key_pressed[KEY_P] = false;
+                break;
+
+            case ALLEGRO_KEY_C:
+                key_pressed[KEY_C] = false;
+                break;
+
+            case ALLEGRO_KEY_T:
+                key_pressed[KEY_T] = false;
+                break;
+
+            case ALLEGRO_KEY_A:
+                key_pressed[KEY_A] = false;
+                break;
+
+            case ALLEGRO_KEY_B:
+                key_pressed[KEY_B] = false;
+                break;
+        }
+    }
+    return salida;
+}
+
 void setSelectedPort(char puerto){
     PuertoSeleccionado = puerto;
 }

@@ -49,7 +49,12 @@
 #define SOUNDICNX 20
 #define SOUNDICNY 20
 
+enum keys { KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7,
+KEY_Q, KEY_S, KEY_P, KEY_C, KEY_T, KEY_A, KEY_B  
+};
+
 int mouseChanges(int evMouseX, int evMouseY, ALLEGRO_SAMPLE* click);
+int keyboardChanges (bool accion, int tecla);
 void setSelectedPort(char puerto);
 char getSelectedPort(void);
 void setMute(bool modo);

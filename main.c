@@ -274,7 +274,6 @@ void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
     
     al_draw_bitmap(textura[Q_BUTTON], al_get_display_width(disp) - DISTYBOTONESCE, 10, 0);
     
-    al_draw_bitmap(textura[MICRO_BLUE_LED], MINILEDSUPIZQX + CIRCUITOX, MINILEDSUPIZQY + 2*MINILEDSIZE + CIRCUITOY, 0);
     
     al_draw_text(font, al_map_rgb(0, 0, 0), BOTONCX + ANCHOBOTC + 10, BOTONCY + 9, 0, "Apagar");
     
@@ -309,6 +308,7 @@ void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
     }
     else{
         al_draw_bitmap(textura[17], SOUNDICNX, SOUNDICNY, 0);
+        al_draw_bitmap(textura[MICRO_BLUE_LED], MINILEDSUPIZQX + CIRCUITOX, MINILEDSUPIZQY + 2*MINILEDSIZE + CIRCUITOY, 0);
         al_set_sample_instance_playing(reproductor, true);
     }
     

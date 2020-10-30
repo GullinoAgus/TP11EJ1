@@ -125,47 +125,36 @@ int main(int argc, char** argv) {
                 do_exit = 1;
                 break;
             case ALLEGRO_EVENT_KEY_DOWN:
-                switch (ev.keyboard.keycode){
-                    case ALLEGRO_KEY_B:
-                        setSelectedPort(PUERTOB);
-                        break;
-                    case ALLEGRO_KEY_A:
-                        setSelectedPort(PUERTOA);
-                        break;
-                    case ALLEGRO_KEY_P:
-                        if(al_get_timer_started(timer)){
-                            al_stop_timer(timer);
-                        }
-                        else{
-                            al_start_timer(timer);
-                        }
-                        break;
-                }
+                
                 break;
             case ALLEGRO_EVENT_TIMER:
-                mascara = (wordGet(PUERTOD) == 0) ? mascara : wordGet(PUERTOD);
-                maskToggle(PUERTOD, mascara);
+                if(wordGet(PUERTOD) == 0){
+                    maskOn(PUERTOD, mascara);
+                }else{
+                    maskOff(PUERTOD, mascara);
+                }
                 break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
                 al_play_sample(click, 2, 0 ,1.5 , ALLEGRO_PLAYMODE_ONCE, NULL);
                 break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
-                if ( (ev.mouse.button & 2) == 0){   //Solo si se presiono el click izquierdo
+                if ( ev.mouse.button & 1){   //Solo si se presiono el click izquierdo
                     
                     mouseAction = mouseChanges(ev.mouse.x, ev.mouse.y, click);
+                    mascara = mascara | wordGet(PUERTOD);
                 }
-                if (mouseAction == 1){
+                if (mouseAction == 1 && wordGet(PUERTOD)){
                     
                     if(al_get_timer_started(timer)){
                             al_stop_timer(timer);
+                            mascara = 0;
                         }
                         else{
                             al_start_timer(timer);
                         }
-                        break;
+                        
                 }
                 else if(mouseAction == 2){
-                                      
                     do_exit = 1;
                 }
                 break;

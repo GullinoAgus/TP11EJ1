@@ -36,7 +36,6 @@ int main(int argc, char** argv) {
     ALLEGRO_SAMPLE* click = NULL;
     uint16_t mascara = 0;
     int accion = 0;
-    int check = 0;
    
     //Inicializamos los addon
     if(inicializarAllegro() == 1){
@@ -135,7 +134,7 @@ int main(int argc, char** argv) {
                 do_exit = 1;
                 break;
             case ALLEGRO_EVENT_KEY_DOWN:
-                check=keyboardChanges (false, ev.keyboard.keycode);
+                accion=keyboardChanges (false, ev.keyboard.keycode);
                 break;
             case ALLEGRO_EVENT_KEY_UP:   
                 keyboardChanges (true, ev.keyboard.keycode);

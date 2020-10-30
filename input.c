@@ -126,49 +126,49 @@ int keyboardChanges (bool accion, int tecla){
         switch(tecla) {
             case ALLEGRO_KEY_0:
                 if(key_pressed[KEY_0] == false)
-                    bitSet(PuertoSeleccionado,0);
+                    bitToggle(PuertoSeleccionado,0);
                 key_pressed[KEY_0] = true;
                 break;
 
             case ALLEGRO_KEY_1:
                 if(key_pressed[KEY_1] == false)
-                    bitSet(PuertoSeleccionado,1);
+                    bitToggle(PuertoSeleccionado,1);
                 key_pressed[KEY_1] = true;
                 break;
 
             case ALLEGRO_KEY_2:
                 if(key_pressed[KEY_2] == false)
-                    bitSet(PuertoSeleccionado,2);
+                    bitToggle(PuertoSeleccionado,2);
                 key_pressed[KEY_2] = true;
                 break;
 
             case ALLEGRO_KEY_3:
                 if(key_pressed[KEY_3] == false)
-                    bitSet(PuertoSeleccionado,3);
+                    bitToggle(PuertoSeleccionado,3);
                 key_pressed[KEY_3] = true;
                 break;
 
             case ALLEGRO_KEY_4:
                 if(key_pressed[KEY_4] == false)
-                    bitSet(PuertoSeleccionado,4);
+                    bitToggle(PuertoSeleccionado,4);
                 key_pressed[KEY_4] = true;
                 break;
 
             case ALLEGRO_KEY_5:
                 if(key_pressed[KEY_5] == false)
-                    bitSet(PuertoSeleccionado,5);
+                    bitToggle(PuertoSeleccionado,5);
                 key_pressed[KEY_5] = true;
                 break;
 
             case ALLEGRO_KEY_6:
                 if(key_pressed[KEY_6] == false)
-                    bitSet(PuertoSeleccionado,6);
+                    bitToggle(PuertoSeleccionado,6);
                 key_pressed[KEY_6] = true;
                 break;
 
             case ALLEGRO_KEY_7:
                 if(key_pressed[KEY_7] == false)
-                    bitSet(PuertoSeleccionado,7);
+                    bitToggle(PuertoSeleccionado,7);
                 key_pressed[KEY_7] = true;
                 break;
 
@@ -178,10 +178,10 @@ int keyboardChanges (bool accion, int tecla){
                 key_pressed[KEY_Q] = true;
                 break;
 
-            case ALLEGRO_KEY_S:
-                if(key_pressed[KEY_S] == false)
+            case ALLEGRO_KEY_E:
+                if(key_pressed[KEY_E] == false)
                     maskOn(PuertoSeleccionado,255);
-                key_pressed[KEY_S] = true;
+                key_pressed[KEY_E] = true;
                 break;
 
             case ALLEGRO_KEY_P:
@@ -195,10 +195,10 @@ int keyboardChanges (bool accion, int tecla){
                 key_pressed[KEY_C] = true;
                 break;
 
-            case ALLEGRO_KEY_T:
-                if(key_pressed[KEY_T] == false)
+            case ALLEGRO_KEY_I:
+                if(key_pressed[KEY_I] == false)
                     maskToggle(PuertoSeleccionado,255);
-                key_pressed[KEY_T] = true;
+                key_pressed[KEY_I] = true;
                 break;
 
             case ALLEGRO_KEY_A:
@@ -252,8 +252,8 @@ int keyboardChanges (bool accion, int tecla){
                 key_pressed[KEY_Q] = false;
                 break;
 
-            case ALLEGRO_KEY_S:
-                key_pressed[KEY_S] = false;
+            case ALLEGRO_KEY_E:
+                key_pressed[KEY_E] = false;
                 break;
 
             case ALLEGRO_KEY_P:
@@ -264,8 +264,8 @@ int keyboardChanges (bool accion, int tecla){
                 key_pressed[KEY_C] = false;
                 break;
 
-            case ALLEGRO_KEY_T:
-                key_pressed[KEY_T] = false;
+            case ALLEGRO_KEY_I:
+                key_pressed[KEY_I] = false;
                 break;
 
             case ALLEGRO_KEY_A:

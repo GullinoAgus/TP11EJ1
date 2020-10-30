@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "emulador.h"
+#include "mouse.h"
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_native_dialog.h>
@@ -14,32 +15,6 @@
 #include <allegro5/allegro_acodec.h>
 
 
-#define CANTTEXTURAS 18
-#define CIRCUITOX 20
-#define CIRCUITOY 80
-#define PUERTOAX 465
-#define PUERTOAY 100
-#define ANCHOPUERTOA 174
-#define ALTOPUERTOA 49
-#define BOTONBITSX 488
-#define BOTONBITSY 200
-#define BOTONCX 488
-#define BOTONCY 280
-#define ANCHOBOTC 45
-#define ALTOBOTC 49
-#define DISTYBOTONESCE 60
-#define DISTXBOTONESCE 163
-#define LEDSUPX 380
-#define LEDSUPY 34
-#define LEDSIZE 14
-#define MINILEDSUPIZQX 166
-#define MINILEDSUPIZQY 38
-#define MINILEDSUPDERX 272
-#define MINILEDSUPDERY 38
-#define MINILEDSIZE 14
-#define SOUNDICNX 20
-#define SOUNDICNY 20
-
 enum textura_id {CIRCUITO = 0, Q_BUTTON, E_BUTTON, I_BUTTON, P_BUTTON, C_BUTTON, BITS_BUTTONS, BLUE_LED, YELLOW_LED, 
                  GREEN_LED, PORTA_BUTTON_NP, PORTA_BUTTON_P, PORTB_BUTTON_NP, PORTB_BUTTON_P, MICRO_BLUE_LED,
                  MICRO_RED_LED, MICRO_YELLOW_LED, SOUND_ON, SOUND_OFF};
@@ -47,9 +22,6 @@ enum textura_id {CIRCUITO = 0, Q_BUTTON, E_BUTTON, I_BUTTON, P_BUTTON, C_BUTTON,
 int cargarImagenes(ALLEGRO_BITMAP *textura[]);
 int inicializarAllegro();
 void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor);
-
-char PuertoSeleccionado = PUERTOA;
-char mute = 0;
 
 int main(int argc, char** argv) {
 
@@ -60,7 +32,9 @@ int main(int argc, char** argv) {
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
     ALLEGRO_TIMER* timer = NULL;
     ALLEGRO_SAMPLE* musiquita = NULL;
+    ALLEGRO_SAMPLE* click = NULL;
     uint16_t mascara = 0;
+    int mouseAction = 0;
    
     //Inicializamos los addon
     if(inicializarAllegro() == 1){
@@ -68,7 +42,7 @@ int main(int argc, char** argv) {
     }
     
     //Creamos el display
-    disp = al_create_display(850,480);
+    disp = al_create_display(ANCHODELDISPLAY,ALTODELDISPLAY);
     
     if(!disp){
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar la ventana", NULL, ALLEGRO_MESSAGEBOX_ERROR);
@@ -94,13 +68,23 @@ int main(int argc, char** argv) {
         al_destroy_font(Avenir20);
         return -1;
      }
-    al_reserve_samples(1);
-    musiquita = al_load_sample("resources/music/Hedwig'stheme8-Bit.ogg");
+    al_reserve_samples(2);
+    //musiquita = al_load_sample("resources/music/Hedwig'stheme8-Bit.ogg");
+    musiquita = al_load_sample("resources/music/africa-toto.wav");
     if(!musiquita){
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar la musica", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
         al_destroy_font(Avenir20);
         al_destroy_sample(musiquita);
+        return -1;
+    }
+    click = al_load_sample("resources/music/click_sound.wav");
+    if(!musiquita){
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar los sonidos", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        al_destroy_display(disp);
+        al_destroy_font(Avenir20);
+        al_destroy_sample(musiquita);
+        al_destroy_sample(click);
         return -1;
     }
     ALLEGRO_SAMPLE_INSTANCE* reproductor = al_create_sample_instance(musiquita);
@@ -121,7 +105,7 @@ int main(int argc, char** argv) {
     ALLEGRO_EVENT ev;
     
     int do_exit = 0;
-    maskOn(PUERTOD, 0xA0B1);
+
     while (!do_exit) {
 
         ActualizarDisplay(textura, disp, Avenir20, reproductor);
@@ -132,17 +116,13 @@ int main(int argc, char** argv) {
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 do_exit = 1;
                 break;
-            case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
-                if((ev.mouse.button == 1) && (ev.mouse.x <= (SOUNDICNX + 36) && ev.mouse.x >= SOUNDICNX && ev.mouse.y <= (SOUNDICNY + 36) && ev.mouse.y >= SOUNDICNY))
-                        mute = !mute;
-                break;
             case ALLEGRO_EVENT_KEY_DOWN:
                 switch (ev.keyboard.keycode){
                     case ALLEGRO_KEY_B:
-                        PuertoSeleccionado = PUERTOB;
+                        setSelectedPort(PUERTOB);
                         break;
                     case ALLEGRO_KEY_A:
-                        PuertoSeleccionado = PUERTOA;
+                        setSelectedPort(PUERTOA);
                         break;
                     case ALLEGRO_KEY_P:
                         if(al_get_timer_started(timer)){
@@ -157,6 +137,29 @@ int main(int argc, char** argv) {
             case ALLEGRO_EVENT_TIMER:
                 mascara = (wordGet(PUERTOD) == 0) ? mascara : wordGet(PUERTOD);
                 maskToggle(PUERTOD, mascara);
+                break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                al_play_sample(click, 2, 0 ,1 , ALLEGRO_PLAYMODE_ONCE, NULL);
+                break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                if ( (ev.mouse.button & 2) == 0){   //Solo si se presiono el click izquierdo
+                    
+                    mouseAction = mouseChanges(ev.mouse.x, ev.mouse.y, click);
+                }
+                if (mouseAction == 1){
+                    
+                    if(al_get_timer_started(timer)){
+                            al_stop_timer(timer);
+                        }
+                        else{
+                            al_start_timer(timer);
+                        }
+                        break;
+                }
+                else if(mouseAction == 2){
+                                      
+                    do_exit = 1;
+                }
                 break;
         }
         
@@ -270,11 +273,11 @@ void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
     
     al_draw_text(font, al_map_rgb(0, 0, 0), BOTONCX + DISTXBOTONESCE + ANCHOBOTC + 10, BOTONCY + DISTYBOTONESCE + 9, 0, "Invertir");
     
-    if (PuertoSeleccionado == PUERTOA){
+    if (getSelectedPort() == PUERTOA){
         al_draw_bitmap(textura[PORTA_BUTTON_P],PUERTOAX, PUERTOAY, 0);
         al_draw_bitmap(textura[PORTB_BUTTON_NP], PUERTOAX + ANCHOPUERTOA, PUERTOAY, 0);
     }
-    else if (PuertoSeleccionado == PUERTOB){
+    else if (getSelectedPort() == PUERTOB){
         al_draw_bitmap(textura[PORTA_BUTTON_NP],PUERTOAX, PUERTOAY, 0);
         al_draw_bitmap(textura[PORTB_BUTTON_P], PUERTOAX + ANCHOPUERTOA, PUERTOAY, 0);
     }
@@ -289,7 +292,7 @@ void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
         puerto /= 2;
     }
     
-    if(mute == 1){
+    if(getMute() == 1){
         al_draw_bitmap(textura[18], SOUNDICNX, SOUNDICNY, 0);
         al_set_sample_instance_playing(reproductor, false);
     }

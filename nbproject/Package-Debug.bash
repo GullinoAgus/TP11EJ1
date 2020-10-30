@@ -63,12 +63,16 @@ cd "${TOP}"
 makeDirectory "${NBTMPDIR}/tp11ej1/bin"
 copyFileToTmpDir "${OUTPUT_PATH}" "${NBTMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}" 0755
 
-
-# Generate tar file
 cd "${TOP}"
-rm -f ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/tp11ej1.tar
+makeDirectory "${NBTMPDIR}/tp11ej1/bin"
+copyFileToTmpDir "${OUTPUT_PATH}" "${NBTMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}" 0755
+
+
+# Generate zip file
+cd "${TOP}"
+rm -f ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/tp11ej1.zip
 cd ${NBTMPDIR}
-tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/tp11ej1.tar *
+zip -r  ../../../../${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/tp11ej1.zip *
 checkReturnCode
 
 # Cleanup

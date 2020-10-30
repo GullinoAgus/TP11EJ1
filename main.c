@@ -34,6 +34,7 @@ int main(int argc, char** argv) {
     ALLEGRO_TIMER* timer = NULL;
     ALLEGRO_SAMPLE* musiquita = NULL;
     ALLEGRO_SAMPLE* click = NULL;
+    ALLEGRO_SAMPLE_INSTANCE* reproductor = NULL;
     uint16_t mascara = 0;
     int accion = 0;
    
@@ -87,7 +88,7 @@ int main(int argc, char** argv) {
         return -1;
     }
     click = al_load_sample("resources/music/click_sound.wav");
-    if(!musiquita){
+    if(!click){
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar los sonidos", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
         al_destroy_font(Avenir20);
@@ -104,7 +105,7 @@ int main(int argc, char** argv) {
         al_destroy_sample(click);
         return -1;
     }
-    ALLEGRO_SAMPLE_INSTANCE* reproductor = al_create_sample_instance(musiquita);
+    reproductor = al_create_sample_instance(musiquita);
     al_attach_sample_instance_to_mixer(reproductor, al_get_default_mixer());
     
     event_queue = al_create_event_queue();
@@ -128,7 +129,7 @@ int main(int argc, char** argv) {
         ActualizarDisplay(textura, disp, Avenir20, reproductor);
         
         al_wait_for_event(event_queue, &ev); //Toma un evento de la cola, VER RETURN EN DOCUMENT.
-        
+        accion = 0;
         switch(ev.type){
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 do_exit = 1;
@@ -148,11 +149,11 @@ int main(int argc, char** argv) {
                 }
                 break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                al_play_sample(click, 2, 0 ,1.5 , ALLEGRO_PLAYMODE_ONCE, NULL);
+                al_play_sample(click, 2, 0 ,1 , ALLEGRO_PLAYMODE_ONCE, NULL);
                 break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                 if ( ev.mouse.button & 1){   //Solo si se presiono el click izquierdo
-                    accion = mouseChanges(ev.mouse.x, ev.mouse.y, click);
+                    accion = mouseChanges(ev.mouse.x, ev.mouse.y);
                 }
                 break;
         }

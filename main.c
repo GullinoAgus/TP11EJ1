@@ -71,8 +71,14 @@ int main(int argc, char** argv) {
         return -1;
      }
     al_reserve_samples(2);
-    //musiquita = al_load_sample("resources/music/Hedwig'stheme8-Bit.ogg");
-    musiquita = al_load_sample("resources/music/africa-toto.wav");
+    if(al_show_native_message_box(disp, "Seleccione cancion", "Pregunta:"
+            , "Quiere escuchar Harry Potter? En caso de No se reproducira Africa ToTo"
+            , NULL, ALLEGRO_MESSAGEBOX_QUESTION + ALLEGRO_MESSAGEBOX_YES_NO) == 2){
+        musiquita = al_load_sample("resources/music/africa-toto.wav");
+    }
+    else{
+        musiquita = al_load_sample("resources/music/Hedwig'stheme8-Bit.ogg");
+    }
     if(!musiquita){
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar la musica", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);

@@ -17,14 +17,17 @@
 
 enum textura_id {CIRCUITO = 0, Q_BUTTON, E_BUTTON, I_BUTTON, P_BUTTON, C_BUTTON, BITS_BUTTONS, BLUE_LED, YELLOW_LED, 
                  GREEN_LED, PORTA_BUTTON_NP, PORTA_BUTTON_P, PORTB_BUTTON_NP, PORTB_BUTTON_P, MICRO_BLUE_LED,
-                 MICRO_RED_LED, MICRO_YELLOW_LED, SOUND_ON, SOUND_OFF};
+                 MICRO_RED_LED, MICRO_YELLOW_LED, SOUND_ON, SOUND_OFF, Q_BUTTON_PRESSED, E_BUTTON_PRESSED, I_BUTTON_PRESSED, 
+                 P_BUTTON_PRESSED, C_BUTTON_PRESSED};
 
 /*Funcion para cargar todas las texturas y manejarlas con un arreglo de punteros a ellas, ordenado segun el enum textura_id*/
 int cargarImagenes(ALLEGRO_BITMAP *textura[]);
 /*Inicializacion de todos los componentes necesarios del programa*/
 int inicializarAllegro();
 /*Funcion que actualiza el display de acuerdo a la informacion que leea del puerto en el emulador*/
-void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor);
+void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor, ALLEGRO_TIMER* timerP);
+
+int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP);
 
 int main(int argc, char** argv) {
 
@@ -152,6 +155,7 @@ int main(int argc, char** argv) {
             al_destroy_bitmap(textura[i]);
         }
     }
+    
     /*Inicializo un mixer default para permitir reproducir la musica con mayor facilidad*/
     reproductor = al_create_sample_instance(musiquita);
     al_attach_sample_instance_to_mixer(reproductor, al_get_default_mixer());
@@ -162,55 +166,54 @@ int main(int argc, char** argv) {
     al_register_event_source(colaEventos, al_get_timer_event_source(timer));
 
     while (!do_exit) {
-
-        actualizarDisplay(textura, disp, avenir20, reproductor);   //Actualizo el display antes de esperar el proximo evento
-        
+  
         al_wait_for_event(colaEventos, &evento); //Espera que ocurra un evento
         accion = 0;
+        
         switch(evento.type){                    //Se evalua el evento ocurrido y se actua acordemente
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 do_exit = 1;
                 break;
+                
             case ALLEGRO_EVENT_KEY_DOWN:
-                accion=keyboardChanges (false, evento.keyboard.keycode);
+                accion = keyboardChanges (PRESSED, evento.keyboard.keycode);
+                do_exit = actionHandler(accion, &mascara, timer);
                 break;
+                
             case ALLEGRO_EVENT_KEY_UP:   
-                keyboardChanges (true, evento.keyboard.keycode);
+                keyboardChanges (NOPRESSED, evento.keyboard.keycode);
                 break;
+                
             case ALLEGRO_EVENT_TIMER:
+                    
                 if(wordGet(PUERTOD) == 0){
                     maskOn(PUERTOD, mascara);
                 }
                 else{
-                    maskOff(PUERTOD, mascara);
+                    mascara = mascara | wordGet(PUERTOD);
+                    maskOff(PUERTOD, 65535);
                 }
                 break;
+                
             case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                al_play_sample(click, 2, 0 ,1 , ALLEGRO_PLAYMODE_ONCE, NULL);
+               
+                if ( evento.mouse.button & 1){   //Solo si se presiono el click izquierdo
+                    al_play_sample(click, 2, 0 ,1 , ALLEGRO_PLAYMODE_ONCE, NULL);
+                }
+                
+                accion = mouseChanges(PRESSED, evento.mouse.x, evento.mouse.y);
+                do_exit = actionHandler(accion, &mascara, timer);
                 break;
+                
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                 if ( evento.mouse.button & 1){   //Solo si se presiono el click izquierdo
-                    accion = mouseChanges(evento.mouse.x, evento.mouse.y);
+                    accion = mouseChanges(NOPRESSED, evento.mouse.x, evento.mouse.y);
                 }
                 break;
         }
-        if (accion == 1 && wordGet(PUERTOD)){       //Si se presiona P, las funciones de entrada devuelven un 1, que indica parpadeo
-                    
-            if(al_get_timer_started(timer)){
-                al_stop_timer(timer);
-                mascara = mascara | wordGet(PUERTOD);
-                mascara = 0;
-            }
-            else{
-                al_start_timer(timer);
-                mascara = mascara & wordGet(PUERTOD);
-            }        
-        }
-        else if(accion == 2){                       //Si se presiona Q, las funciones de entrada devuelven un 2, que indica salida
-            do_exit = 1;
-        }
-        mascara = mascara | wordGet(PUERTOD);
         
+        actualizarDisplay(textura, disp, avenir20, reproductor, timer);   //Actualizo el display antes de esperar el proximo evento
+
     }
     /*Destruyo todas las estructuras que lo requieren*/
     al_destroy_font(avenir20);
@@ -225,6 +228,27 @@ int main(int argc, char** argv) {
     }
     
     return (EXIT_SUCCESS);
+}
+
+int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP){
+    
+    int exit = 0;
+    
+    if(action == 1){
+        
+        if(al_get_timer_started(timerP)){
+            al_stop_timer(timerP);
+        }
+        else{
+            al_start_timer(timerP);
+            *mascara = wordGet(PUERTOD);
+        }
+    }
+    else if(action == 2){
+        exit = 1;
+    }
+    
+    return exit;
 }
 
 int inicializarAllegro(ALLEGRO_DISPLAY* disp){
@@ -295,7 +319,7 @@ int cargarImagenes(ALLEGRO_BITMAP *textura[]){
     return error;
 }
 
-void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor){
+void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor, ALLEGRO_TIMER* timerP){
     
     al_clear_to_color(al_map_rgb(181, 224, 186));               //Pinto el fondo color verde bonito
     
@@ -303,15 +327,56 @@ void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
 
     al_draw_bitmap(textura[BITS_BUTTONS], BOTONBITSX, BOTONBITSY, 0);   //dibujado de la barra de botones de control de bits
     
-    al_draw_bitmap(textura[C_BUTTON], BOTONCX, BOTONCY, 0);     //Dibujo el boton C para apagar los leds
+
     
-    al_draw_bitmap(textura[E_BUTTON], BOTONCX, BOTONCY + DISTYBOTONESCE, 0);  //Dibujo el boton E para encender los leds
+    if(getKeyState(KEY_C) == PRESSED){
+        al_draw_bitmap(textura[C_BUTTON_PRESSED], BOTONCX, BOTONCY, 0);     //Dibujo el boton C para apagar los leds
+    }
+    else{
+        al_draw_bitmap(textura[C_BUTTON], BOTONCX, BOTONCY, 0);     //Dibujo el boton C para apagar los leds
+    }
     
-    al_draw_bitmap(textura[P_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY, 0);  //Dibujo el boton P para comenzar el parpadeo
-            
-    al_draw_bitmap(textura[I_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY + DISTYBOTONESCE, 0);  //Dibujo el boton I para hacer un toggle a los leds
     
-    al_draw_bitmap(textura[Q_BUTTON], al_get_display_width(disp) - DISTYBOTONESCE, 10, 0);  //Dibujo el boton Qpara salir del programa
+    if(getKeyState(KEY_E) == PRESSED){
+        al_draw_bitmap(textura[E_BUTTON_PRESSED], BOTONCX, BOTONCY + DISTYBOTONESCE, 0);  //Dibujo el boton E para encender los leds
+    }
+    else{
+        al_draw_bitmap(textura[E_BUTTON], BOTONCX, BOTONCY + DISTYBOTONESCE, 0);  //Dibujo el boton E para encender los leds
+    }
+    
+    
+    if(getKeyState(KEY_P) == PRESSED){
+        al_draw_bitmap(textura[P_BUTTON_PRESSED], BOTONCX + DISTXBOTONESCE, BOTONCY, 0);  //Dibujo el boton P para comenzar el parpadeo
+    }
+    else{
+        al_draw_bitmap(textura[P_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY, 0);  //Dibujo el boton P para comenzar el parpadeo
+    }
+    
+    
+    if(getKeyState(KEY_I) == PRESSED){
+        al_draw_bitmap(textura[I_BUTTON_PRESSED], BOTONCX + DISTXBOTONESCE, BOTONCY + DISTYBOTONESCE, 0);  //Dibujo el boton I para hacer un toggle a los leds
+    }
+    else{
+        al_draw_bitmap(textura[I_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY + DISTYBOTONESCE, 0);  //Dibujo el boton I para hacer un toggle a los leds
+    }
+    
+    
+    if(getKeyState(KEY_Q) == PRESSED){
+        al_draw_bitmap(textura[Q_BUTTON_PRESSED], al_get_display_width(disp) - DISTYBOTONESCE, 10, 0);  //Dibujo el boton Qpara salir del programa
+    }
+    else{
+        al_draw_bitmap(textura[Q_BUTTON], al_get_display_width(disp) - DISTYBOTONESCE, 10, 0);  //Dibujo el boton Qpara salir del programa
+    }
+    
+    
+    if (getSelectedPort() == PUERTOA){              //De acuerdo al puerto seleccionado dibujo los botones de puerto A y puerto B segun corresponda
+        al_draw_bitmap(textura[PORTA_BUTTON_P],PUERTOAX, PUERTOAY, 0);                  //Puerto A presionado
+        al_draw_bitmap(textura[PORTB_BUTTON_NP], PUERTOAX + ANCHOPUERTOA, PUERTOAY, 0);
+    }
+    else if (getSelectedPort() == PUERTOB){
+        al_draw_bitmap(textura[PORTA_BUTTON_NP],PUERTOAX, PUERTOAY, 0);                 //Puerto B presionado
+        al_draw_bitmap(textura[PORTB_BUTTON_P], PUERTOAX + ANCHOPUERTOA, PUERTOAY, 0);
+    }
     
     /*Escribo el texto para los botones*/
     al_draw_text(font, al_map_rgb(0, 0, 0), BOTONCX + ANCHOBOTC + 10, BOTONCY + 9, 0, "Apagar");
@@ -322,32 +387,27 @@ void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
     
     al_draw_text(font, al_map_rgb(0, 0, 0), BOTONCX + DISTXBOTONESCE + ANCHOBOTC + 10, BOTONCY + DISTYBOTONESCE + 9, 0, "Invertir");
     
-    if (getSelectedPort() == PUERTOA){              //De acuerdo al puerto seleccionado dibujo los botones de puerto A y puerto B segun corresponda
-        al_draw_bitmap(textura[PORTA_BUTTON_P],PUERTOAX, PUERTOAY, 0);                  //Puerto A presionado
-        al_draw_bitmap(textura[PORTB_BUTTON_NP], PUERTOAX + ANCHOPUERTOA, PUERTOAY, 0);
-    }
-    else if (getSelectedPort() == PUERTOB){
-        al_draw_bitmap(textura[PORTA_BUTTON_NP],PUERTOAX, PUERTOAY, 0);                 //Puerto B presionado
-        al_draw_bitmap(textura[PORTB_BUTTON_P], PUERTOAX + ANCHOPUERTOA, PUERTOAY, 0);
-    }
-    /*Tomo el valor del puerto D del modulo emulaador, y de acuerdo a los valores de los bits 
+    
+    /*Tomo el valor del puerto D del modulo emulador, y de acuerdo a los valores de los bits 
      dibujo los leds encendidos o apagados segun corresponda*/
     uint16_t puerto = wordGet(PUERTOD);
     
-    for (int i = 0; i < 16; i++){
+    //!al_get_timer_started(timerP)
+    for (int i = 0; 1  && i < 16; i++){
         if(puerto%2 == 1){
             al_draw_bitmap(textura[GREEN_LED],LEDSUPX + CIRCUITOX, LEDSUPY + i*LEDSIZE + CIRCUITOY, 0);
             al_draw_bitmap(textura[MICRO_YELLOW_LED], MINILEDSUPDERX + CIRCUITOX, MINILEDSUPDERY + i*MINILEDSIZE + CIRCUITOY, 0);
         }
         puerto /= 2;
     }
+    
     /*Segun si el programa se encuentra muteado dibujo el boton de muteo o desmuteo segun corresponda*/
     if(getMute() == 1){
-        al_draw_bitmap(textura[18], SOUNDICNX, SOUNDICNY, 0);
+        al_draw_bitmap(textura[SOUND_OFF], SOUNDICNX, SOUNDICNY, 0);
         al_set_sample_instance_playing(reproductor, false);
     }
     else{
-        al_draw_bitmap(textura[17], SOUNDICNX, SOUNDICNY, 0);
+        al_draw_bitmap(textura[SOUND_ON], SOUNDICNX, SOUNDICNY, 0);
         al_draw_bitmap(textura[MICRO_BLUE_LED], MINILEDSUPIZQX + CIRCUITOX, MINILEDSUPIZQY + 2*MINILEDSIZE + CIRCUITOY, 0);
         al_set_sample_instance_playing(reproductor, true);
     }

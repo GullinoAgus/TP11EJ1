@@ -20,7 +20,10 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define CANTTEXTURAS 18
+#define PRESSED 1
+#define NOPRESSED 0
+#define CANTTEXTURAS 23
+
 #define CIRCUITOX 20
 #define CIRCUITOY 90
 #define PUERTOAX 465
@@ -51,17 +54,24 @@
 #define SOUNDICNY 20
 
 /*******************************************************************************
+ * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
+ ******************************************************************************/
+enum keys { KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7,
+KEY_Q, KEY_E, KEY_P, KEY_C, KEY_I, KEY_A, KEY_B  
+};
+
+/*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-int mouseChanges(int evMouseX, int evMouseY);
+int mouseChanges(bool estado, int evMouseX, int evMouseY);
 /**
  * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
  * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
  * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
  * @return valor del bit solicitado
 */
-int keyboardChanges (bool accion, int tecla);
+int keyboardChanges (bool estado, int tecla);
 /**
  * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
  * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
@@ -96,6 +106,8 @@ bool getMute(void);
  * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
  * @return valor del bit solicitado
 */
+
+bool getKeyState(int boton);
 
 #endif /* INPUT_H */
 

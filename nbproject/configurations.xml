@@ -32,7 +32,12 @@
         <itemPath>resources/textures/16.png</itemPath>
         <itemPath>resources/textures/17.png</itemPath>
         <itemPath>resources/textures/18.png</itemPath>
+        <itemPath>resources/textures/19.png</itemPath>
         <itemPath>resources/textures/2.png</itemPath>
+        <itemPath>resources/textures/20.png</itemPath>
+        <itemPath>resources/textures/21.png</itemPath>
+        <itemPath>resources/textures/22.png</itemPath>
+        <itemPath>resources/textures/23.png</itemPath>
         <itemPath>resources/textures/3.png</itemPath>
         <itemPath>resources/textures/4.png</itemPath>
         <itemPath>resources/textures/5.png</itemPath>
@@ -114,6 +119,18 @@
                             perm="755"
                             owner="root"
                             group="bin"/>
+          <packFileListElem type="File"
+                            to="${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}"
+                            from="${OUTPUT_PATH}"
+                            perm="755"
+                            owner="root"
+                            group="bin"/>
+          <packFileListElem type="File"
+                            to="${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}"
+                            from="${OUTPUT_PATH}"
+                            perm="755"
+                            owner="root"
+                            group="bin"/>
         </packFileList>
       </packaging>
       <item path="emulador.c" ex="false" tool="0" flavor2="0">
@@ -166,7 +183,17 @@
       </item>
       <item path="resources/textures/18.png" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="resources/textures/19.png" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="resources/textures/2.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/20.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/21.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/22.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/23.png" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/textures/3.png" ex="false" tool="3" flavor2="0">
       </item>
@@ -277,7 +304,17 @@
       </item>
       <item path="resources/textures/18.png" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="resources/textures/19.png" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="resources/textures/2.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/20.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/21.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/22.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resources/textures/23.png" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/textures/3.png" ex="false" tool="3" flavor2="0">
       </item>

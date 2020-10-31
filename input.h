@@ -1,24 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
- * File:   input.h
- * Author: grupo1
- *
- * Created on 29 de octubre de 2020, 19:22
- */
+/***************************************************************************//**
+  @file     +emulador.h+
+  @brief    +Header del modulo emulador de puerto de un microcontrolador.+
+  @author   +Grupo 1+
+ ******************************************************************************/
 
 #ifndef INPUT_H
 #define INPUT_H
+
+/*******************************************************************************
+ * INCLUDE HEADER FILES
+ ******************************************************************************/
 
 #include "emulador.h"
 #include <stdbool.h>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_audio.h>
 
+/*******************************************************************************
+ * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
+ ******************************************************************************/
 
 #define CANTTEXTURAS 18
 #define CIRCUITOX 20
@@ -50,35 +50,52 @@
 #define SOUNDICNX 20
 #define SOUNDICNY 20
 
-enum keys { KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7,
-KEY_Q, KEY_E, KEY_P, KEY_C, KEY_I, KEY_A, KEY_B  
-};
-//HITBOXES
-#define HITBOXP(x,y) (((x) >= BOTONCX + DISTXBOTONESCE)  && ((x) <= BOTONCX + DISTXBOTONESCE+ ANCHOBOTC) && ((y) >= BOTONCY)  && ((y) <= BOTONCY+ALTOBOTC))
-#define HITBOXI(x,y) (((x) >= BOTONCX + DISTXBOTONESCE)  && ((x) <= BOTONCX + DISTXBOTONESCE+ ANCHOBOTC) && ((y) >= BOTONCY + DISTYBOTONESCE)  && ((y) <= BOTONCY + DISTYBOTONESCE+ ALTOBOTC))
-#define HITBOXC(x,y) (((x) >= BOTONCX)  && ((x) <= BOTONCX+ANCHOBOTC) && ((y) >= BOTONCY)  && ((y) <= BOTONCY+ALTOBOTC))
-#define HITBOXE(x,y) (((x) >= BOTONCX)  && ((x) <= BOTONCX+ANCHOBOTC) && ((y) >= BOTONCY + DISTYBOTONESCE)  && ((y) <= BOTONCY + DISTYBOTONESCE+ALTOBOTC))
-#define HITBOXQ(x,y) (((x) >= ANCHODELDISPLAY - DISTYBOTONESCE)  && ((x) <= ANCHODELDISPLAY - DISTYBOTONESCE+ANCHOBOTC) && ((y) >= 10)  && ((y) <= 10+ALTOBOTC))
-#define HITBOXPA(x,y) (((x) >= PUERTOAX) && ((x) <= PUERTOAX+ANCHOPUERTOA) && ((y) >= PUERTOAY)  && ( (y) <= PUERTOAY + ALTOPUERTOA))
-#define HITBOXPB(x,y) (((x) >= PUERTOAX + ANCHOPUERTOA) && ((x) <= PUERTOAX + 2*ANCHOPUERTOA) && ((y) >= PUERTOAY) && ((y) <= PUERTOAY+ALTOPUERTOA))
-#define HITBOXSOUND(x,y) (((x) >= SOUNDICNX)  && ((x) <= (SOUNDICNX + 36) && ((y) >= SOUNDICNY)  && ((y) <= SOUNDICNY + 36)))
-#define HITBOXBIT0(x,y) (((x) >= BOTONBITSX)  && ((x) <= BOTONBITSX+LADODEUNBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
-#define HITBOXBIT1(x,y) (((x) >= BOTONBITSX+LADODEUNBIT+ESPACIOENTREBIT)  && ((x) <= BOTONBITSX+2*LADODEUNBIT + ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
-#define HITBOXBIT2(x,y) (((x) >= BOTONBITSX+2*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+3*LADODEUNBIT+2*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
-#define HITBOXBIT3(x,y) (((x) >= BOTONBITSX+3*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+4*LADODEUNBIT+3*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
-#define HITBOXBIT4(x,y) (((x) >= BOTONBITSX+4*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+5*LADODEUNBIT+4*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
-#define HITBOXBIT5(x,y) (((x) >= BOTONBITSX+5*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+6*LADODEUNBIT+5*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
-#define HITBOXBIT6(x,y) (((x) >= BOTONBITSX+6*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+7*LADODEUNBIT+6*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
-#define HITBOXBIT7(x,y) (((x) >= BOTONBITSX+7*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+8*LADODEUNBIT+7*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
-
+/*******************************************************************************
+ * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
+ ******************************************************************************/
 
 int mouseChanges(int evMouseX, int evMouseY);
+/**
+ * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
+ * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
+ * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
+ * @return valor del bit solicitado
+*/
 int keyboardChanges (bool accion, int tecla);
+/**
+ * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
+ * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
+ * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
+ * @return valor del bit solicitado
+*/
 void setSelectedPort(char puerto);
+/**
+ * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
+ * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
+ * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
+ * @return valor del bit solicitado
+*/
 char getSelectedPort(void);
+/**
+ * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
+ * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
+ * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
+ * @return valor del bit solicitado
+*/
 void setMute(bool modo);
+/**
+ * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
+ * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
+ * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
+ * @return valor del bit solicitado
+*/
 bool getMute(void);
-
+/**
+ * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
+ * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
+ * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
+ * @return valor del bit solicitado
+*/
 
 #endif /* INPUT_H */
 

@@ -20,14 +20,16 @@ enum textura_id {CIRCUITO = 0, Q_BUTTON, E_BUTTON, I_BUTTON, P_BUTTON, C_BUTTON,
                  MICRO_RED_LED, MICRO_YELLOW_LED, SOUND_ON, SOUND_OFF};
 
 int cargarImagenes(ALLEGRO_BITMAP *textura[]);
+
 int inicializarAllegro();
-void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor);
+
+void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor);
 
 int main(int argc, char** argv) {
 
     al_init(); 
     ALLEGRO_DISPLAY* disp;
-    ALLEGRO_FONT* Avenir20;
+    ALLEGRO_FONT* avenir20;
     ALLEGRO_BITMAP* textura[CANTTEXTURAS];
     ALLEGRO_BITMAP* icono = NULL;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
@@ -64,11 +66,11 @@ int main(int argc, char** argv) {
         return -1;
     }
     
-    Avenir20 = al_load_font("resources/fonts/Avenir_Next.ttc", 20, 0);
-    if (!Avenir20) {
+    avenir20 = al_load_font("resources/fonts/Avenir_Next.ttc", 20, 0);
+    if (!avenir20) {
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar las fuentes", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
-        al_destroy_font(Avenir20);
+        al_destroy_font(avenir20);
         return -1;
      }
     al_reserve_samples(2);
@@ -83,7 +85,7 @@ int main(int argc, char** argv) {
     if(!musiquita){
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar la musica", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
-        al_destroy_font(Avenir20);
+        al_destroy_font(avenir20);
         al_destroy_sample(musiquita);
         return -1;
     }
@@ -91,7 +93,7 @@ int main(int argc, char** argv) {
     if(!click){
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar los sonidos", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
-        al_destroy_font(Avenir20);
+        al_destroy_font(avenir20);
         al_destroy_sample(musiquita);
         al_destroy_sample(click);
         return -1;
@@ -100,7 +102,7 @@ int main(int argc, char** argv) {
     if (!al_install_keyboard()) {
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar el teclado", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
-        al_destroy_font(Avenir20);
+        al_destroy_font(avenir20);
         al_destroy_sample(musiquita);
         al_destroy_sample(click);
         return -1;
@@ -126,7 +128,7 @@ int main(int argc, char** argv) {
 
     while (!do_exit) {
 
-        ActualizarDisplay(textura, disp, Avenir20, reproductor);
+        actualizarDisplay(textura, disp, avenir20, reproductor);
         
         al_wait_for_event(event_queue, &ev); //Toma un evento de la cola, VER RETURN EN DOCUMENT.
         accion = 0;
@@ -161,19 +163,22 @@ int main(int argc, char** argv) {
                     
             if(al_get_timer_started(timer)){
                 al_stop_timer(timer);
+                mascara = mascara | wordGet(PUERTOD);
                 mascara = 0;
             }
             else{
                 al_start_timer(timer);
+                mascara = mascara & wordGet(PUERTOD);
             }        
         }
         else if(accion == 2){
             do_exit = 1;
         }
         mascara = mascara | wordGet(PUERTOD);
+        
     }
     
-    al_destroy_font(Avenir20);
+    al_destroy_font(avenir20);
     al_destroy_display(disp);
     al_destroy_event_queue(event_queue);
     al_destroy_timer(timer);
@@ -256,7 +261,7 @@ int cargarImagenes(ALLEGRO_BITMAP *textura[]){
 }
 
 
-void ActualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor){
+void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor){
     
     al_clear_to_color(al_map_rgb(181, 224, 186));
     

@@ -1,61 +1,102 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/***************************************************************************//**
+  @file     +input.c+
+  @brief    +Definicion de funciones y estructuras que utiliza el main para leer entrada de mouse y teclado+
+  @author   +Grupo 1+
+ ******************************************************************************/
+
+/*******************************************************************************
+ * INCLUDE HEADER FILES
+ ******************************************************************************/
 
 #include "input.h"
 
-static char PuertoSeleccionado = PUERTOA;
+
+
+
+/*******************************************************************************
+ * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
+ ******************************************************************************/
+//HITBOXES
+#define HITBOXP(x,y) (((x) >= BOTONCX + DISTXBOTONESCE)  && ((x) <= BOTONCX + DISTXBOTONESCE+ ANCHOBOTC) && ((y) >= BOTONCY)  && ((y) <= BOTONCY+ALTOBOTC))
+#define HITBOXI(x,y) (((x) >= BOTONCX + DISTXBOTONESCE)  && ((x) <= BOTONCX + DISTXBOTONESCE+ ANCHOBOTC) && ((y) >= BOTONCY + DISTYBOTONESCE)  && ((y) <= BOTONCY + DISTYBOTONESCE+ ALTOBOTC))
+#define HITBOXC(x,y) (((x) >= BOTONCX)  && ((x) <= BOTONCX+ANCHOBOTC) && ((y) >= BOTONCY)  && ((y) <= BOTONCY+ALTOBOTC))
+#define HITBOXE(x,y) (((x) >= BOTONCX)  && ((x) <= BOTONCX+ANCHOBOTC) && ((y) >= BOTONCY + DISTYBOTONESCE)  && ((y) <= BOTONCY + DISTYBOTONESCE+ALTOBOTC))
+#define HITBOXQ(x,y) (((x) >= ANCHODELDISPLAY - DISTYBOTONESCE)  && ((x) <= ANCHODELDISPLAY - DISTYBOTONESCE+ANCHOBOTC) && ((y) >= 10)  && ((y) <= 10+ALTOBOTC))
+#define HITBOXPA(x,y) (((x) >= PUERTOAX) && ((x) <= PUERTOAX+ANCHOPUERTOA) && ((y) >= PUERTOAY)  && ( (y) <= PUERTOAY + ALTOPUERTOA))
+#define HITBOXPB(x,y) (((x) >= PUERTOAX + ANCHOPUERTOA) && ((x) <= PUERTOAX + 2*ANCHOPUERTOA) && ((y) >= PUERTOAY) && ((y) <= PUERTOAY+ALTOPUERTOA))
+#define HITBOXSOUND(x,y) (((x) >= SOUNDICNX)  && ((x) <= (SOUNDICNX + 36) && ((y) >= SOUNDICNY)  && ((y) <= SOUNDICNY + 36)))
+#define HITBOXBIT0(x,y) (((x) >= BOTONBITSX)  && ((x) <= BOTONBITSX+LADODEUNBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
+#define HITBOXBIT1(x,y) (((x) >= BOTONBITSX+LADODEUNBIT+ESPACIOENTREBIT)  && ((x) <= BOTONBITSX+2*LADODEUNBIT + ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
+#define HITBOXBIT2(x,y) (((x) >= BOTONBITSX+2*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+3*LADODEUNBIT+2*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
+#define HITBOXBIT3(x,y) (((x) >= BOTONBITSX+3*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+4*LADODEUNBIT+3*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
+#define HITBOXBIT4(x,y) (((x) >= BOTONBITSX+4*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+5*LADODEUNBIT+4*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
+#define HITBOXBIT5(x,y) (((x) >= BOTONBITSX+5*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+6*LADODEUNBIT+5*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
+#define HITBOXBIT6(x,y) (((x) >= BOTONBITSX+6*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+7*LADODEUNBIT+6*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
+#define HITBOXBIT7(x,y) (((x) >= BOTONBITSX+7*(LADODEUNBIT + ESPACIOENTREBIT))  && ((x) <= BOTONBITSX+8*LADODEUNBIT+7*ESPACIOENTREBIT) && ((y) >= BOTONBITSY)  && ((y) <= BOTONBITSY+LADODEUNBIT))
+
+/*******************************************************************************
+ * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
+ ******************************************************************************/
+enum keys { KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7,
+KEY_Q, KEY_E, KEY_P, KEY_C, KEY_I, KEY_A, KEY_B  
+};
+
+/*******************************************************************************
+ * STATIC VARIABLES AND CONST VARIABLES WITH FILE LEVEL SCOPE
+ ******************************************************************************/
+static char puertoSeleccionado = PUERTOA;
 static bool mute = 0;
 
-
-
+/*******************************************************************************
+ *******************************************************************************
+                        GLOBAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
 int mouseChanges(int evMouseX, int evMouseY){
     
     int salida = 0;
     
     if ( HITBOXPA(evMouseX, evMouseY) ){
-            PuertoSeleccionado = PUERTOA;
+            puertoSeleccionado = PUERTOA;
     }                          //HITBOX PUERTOA
     else if ( HITBOXPB(evMouseX, evMouseY) ){
-            PuertoSeleccionado = PUERTOB;
+            puertoSeleccionado = PUERTOB;
     }        //HITBOX PUERTOB
     else if ( HITBOXBIT0(evMouseX, evMouseY) ){
-            bitToggle(PuertoSeleccionado, 0);
+            bitToggle(puertoSeleccionado, 0);
     }                       //HITBOX BIT0
     else if ( HITBOXBIT1(evMouseX, evMouseY) ){
-            bitToggle(PuertoSeleccionado, 1);
+            bitToggle(puertoSeleccionado, 1);
     }         //HITBOX BIT1
     else if ( HITBOXBIT2(evMouseX, evMouseY) ){
-            bitToggle(PuertoSeleccionado, 2);            
+            bitToggle(puertoSeleccionado, 2);            
     }       //HITBOX BIT2
     else if ( HITBOXBIT3(evMouseX, evMouseY) ){
-            bitToggle(PuertoSeleccionado, 3);            
+            bitToggle(puertoSeleccionado, 3);            
     }       //HITBOX BIT3
     else if ( HITBOXBIT4(evMouseX, evMouseY) ){
-            bitToggle(PuertoSeleccionado, 4);            
+            bitToggle(puertoSeleccionado, 4);            
     }       //HITBOX BIT4
     else if (HITBOXBIT5(evMouseX, evMouseY)){
-            bitToggle(PuertoSeleccionado, 5);            
+            bitToggle(puertoSeleccionado, 5);            
     }       //HITBOX BIT5
     else if ( HITBOXBIT6(evMouseX, evMouseY) ){
-            bitToggle(PuertoSeleccionado, 6);            
+            bitToggle(puertoSeleccionado, 6);            
     }       //HITBOX BIT6
     else if ( HITBOXBIT7(evMouseX, evMouseY) ){
-            bitToggle(PuertoSeleccionado, 7);            
+            bitToggle(puertoSeleccionado, 7);            
     }       //HITBOX BIT7
     else if ( HITBOXC(evMouseX, evMouseY) ){
-            maskOff(PuertoSeleccionado, 0xFF);            
+            maskOff(puertoSeleccionado, 0xFF);            
     }                               //HITBOX BOTONC
     else if ( HITBOXP(evMouseX, evMouseY) ){         //HITBOX BOTONP
             salida = 1;
     } //HITBOX BOTONP
     else if ( HITBOXE(evMouseX, evMouseY) ){
-            maskOn(PuertoSeleccionado, 0xFF);
+            maskOn(puertoSeleccionado, 0xFF);
     }                               //HITBOX BOTONE
     else if ( HITBOXI(evMouseX, evMouseY) ){
-            maskToggle(PuertoSeleccionado, 0xFF);
+            maskToggle(puertoSeleccionado, 0xFF);
     } //HITBOX BOTONI
     else if ( HITBOXQ(evMouseX, evMouseY) ){
             salida = 2;
@@ -77,49 +118,49 @@ int keyboardChanges (bool accion, int tecla){
         switch(tecla) {
             case ALLEGRO_KEY_0:
                 if(key_pressed[KEY_0] == false)
-                    bitToggle(PuertoSeleccionado,0);
+                    bitToggle(puertoSeleccionado,0);
                 key_pressed[KEY_0] = true;
                 break;
 
             case ALLEGRO_KEY_1:
                 if(key_pressed[KEY_1] == false)
-                    bitToggle(PuertoSeleccionado,1);
+                    bitToggle(puertoSeleccionado,1);
                 key_pressed[KEY_1] = true;
                 break;
 
             case ALLEGRO_KEY_2:
                 if(key_pressed[KEY_2] == false)
-                    bitToggle(PuertoSeleccionado,2);
+                    bitToggle(puertoSeleccionado,2);
                 key_pressed[KEY_2] = true;
                 break;
 
             case ALLEGRO_KEY_3:
                 if(key_pressed[KEY_3] == false)
-                    bitToggle(PuertoSeleccionado,3);
+                    bitToggle(puertoSeleccionado,3);
                 key_pressed[KEY_3] = true;
                 break;
 
             case ALLEGRO_KEY_4:
                 if(key_pressed[KEY_4] == false)
-                    bitToggle(PuertoSeleccionado,4);
+                    bitToggle(puertoSeleccionado,4);
                 key_pressed[KEY_4] = true;
                 break;
 
             case ALLEGRO_KEY_5:
                 if(key_pressed[KEY_5] == false)
-                    bitToggle(PuertoSeleccionado,5);
+                    bitToggle(puertoSeleccionado,5);
                 key_pressed[KEY_5] = true;
                 break;
 
             case ALLEGRO_KEY_6:
                 if(key_pressed[KEY_6] == false)
-                    bitToggle(PuertoSeleccionado,6);
+                    bitToggle(puertoSeleccionado,6);
                 key_pressed[KEY_6] = true;
                 break;
 
             case ALLEGRO_KEY_7:
                 if(key_pressed[KEY_7] == false)
-                    bitToggle(PuertoSeleccionado,7);
+                    bitToggle(puertoSeleccionado,7);
                 key_pressed[KEY_7] = true;
                 break;
 
@@ -131,7 +172,7 @@ int keyboardChanges (bool accion, int tecla){
 
             case ALLEGRO_KEY_E:
                 if(key_pressed[KEY_E] == false)
-                    maskOn(PuertoSeleccionado,255);
+                    maskOn(puertoSeleccionado,255);
                 key_pressed[KEY_E] = true;
                 break;
 
@@ -142,13 +183,13 @@ int keyboardChanges (bool accion, int tecla){
 
             case ALLEGRO_KEY_C:
                 if(key_pressed[KEY_C] == false)
-                    maskOff(PuertoSeleccionado,255);
+                    maskOff(puertoSeleccionado,255);
                 key_pressed[KEY_C] = true;
                 break;
 
             case ALLEGRO_KEY_I:
                 if(key_pressed[KEY_I] == false)
-                    maskToggle(PuertoSeleccionado,255);
+                    maskToggle(puertoSeleccionado,255);
                 key_pressed[KEY_I] = true;
                 break;
 
@@ -232,11 +273,11 @@ int keyboardChanges (bool accion, int tecla){
 }
 
 void setSelectedPort(char puerto){
-    PuertoSeleccionado = puerto;
+    puertoSeleccionado = puerto;
 }
 
 char getSelectedPort(void){
-    return PuertoSeleccionado;
+    return puertoSeleccionado;
 }
 
 void setMute(bool modo){

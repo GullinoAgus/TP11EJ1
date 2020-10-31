@@ -19,10 +19,11 @@ enum textura_id {CIRCUITO = 0, Q_BUTTON, E_BUTTON, I_BUTTON, P_BUTTON, C_BUTTON,
                  GREEN_LED, PORTA_BUTTON_NP, PORTA_BUTTON_P, PORTB_BUTTON_NP, PORTB_BUTTON_P, MICRO_BLUE_LED,
                  MICRO_RED_LED, MICRO_YELLOW_LED, SOUND_ON, SOUND_OFF};
 
+/*Funcion para cargar todas las texturas y manejarlas con un arreglo de punteros a ellas, ordenado segun el enum textura_id*/
 int cargarImagenes(ALLEGRO_BITMAP *textura[]);
-
+/*Inicializacion de todos los componentes necesarios del programa*/
 int inicializarAllegro();
-
+/*Funcion que actualiza el display de acuerdo a la informacion que leea del puerto en el emulador*/
 void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor);
 
 int main(int argc, char** argv) {
@@ -32,45 +33,64 @@ int main(int argc, char** argv) {
     ALLEGRO_FONT* avenir20;
     ALLEGRO_BITMAP* textura[CANTTEXTURAS];
     ALLEGRO_BITMAP* icono = NULL;
-    ALLEGRO_EVENT_QUEUE *event_queue = NULL;
+    ALLEGRO_EVENT_QUEUE * colaEventos = NULL;
+    ALLEGRO_EVENT evento;
     ALLEGRO_TIMER* timer = NULL;
     ALLEGRO_SAMPLE* musiquita = NULL;
     ALLEGRO_SAMPLE* click = NULL;
     ALLEGRO_SAMPLE_INSTANCE* reproductor = NULL;
-    uint16_t mascara = 0;
-    int accion = 0;
+    
+    int do_exit = 0;        //Variable para salida de loop
+    uint16_t mascara = 0;   //mascara para controlar el parpadeo
+    int accion = 0;         //Variable para evaluar la accion a realizar segun la entrada
    
     //Inicializamos los addon
     if(inicializarAllegro() == 1){
+        al_destroy_font(avenir20);
+        al_destroy_display(disp);
+        al_destroy_event_queue(colaEventos);
+        al_destroy_timer(timer);
+        al_destroy_sample(musiquita);
+        al_destroy_sample(click);
+        al_destroy_bitmap(icono);
+        for(int i= 0; i <= CANTTEXTURAS; i++){
+            al_destroy_bitmap(textura[i]);
+        }
         return -1;
     }
     
     //Creamos el display
     disp = al_create_display(ANCHODELDISPLAY,ALTODELDISPLAY);
-    
     if(!disp){
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar la ventana", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         return -1;
     }
     
-    //Cambiamos el nombre de la ventana
+    //Cambiamos el nombre de la ventana y el icono
     al_set_window_title(disp, "Proyecto Micro");
     icono = al_load_bitmap("resources/textures/icono.png");
-    if(icono){
+    if(icono){    //Si el icono se cargo correctamente lo aplicamos, en caso contrario se destruye el puntero a bitmap y continua el programa
         al_set_display_icon(disp, icono);
     }
+    else{
+        al_destroy_bitmap(icono);
+    }
     //Cargamos las texturas
-    if(cargarImagenes(textura) == 1){
+    if(cargarImagenes(textura) == 1){                       //Si ocurre un problema, destruyo todos los punteros anteriores y termina el programa
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar las texturas", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
+        al_destroy_bitmap(icono);
         return -1;
     }
     
     avenir20 = al_load_font("resources/fonts/Avenir_Next.ttc", 20, 0);
-    if (!avenir20) {
+    if (!avenir20) {                                                //Si ocurre un problema, destruyo todos los punteros anteriores y termina el programa
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar las fuentes", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
-        al_destroy_font(avenir20);
+        al_destroy_bitmap(icono);
+        for(int i= 0; i <= CANTTEXTURAS; i++){
+            al_destroy_bitmap(textura[i]);
+        }
         return -1;
      }
     al_reserve_samples(2);
@@ -82,65 +102,80 @@ int main(int argc, char** argv) {
     else{
         musiquita = al_load_sample("resources/music/Hedwig'stheme8-Bit.ogg");
     }
-    if(!musiquita){
+    if(!musiquita){                                                //Si ocurre un problema, destruyo todos los punteros anteriores y termina el programa
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar la musica", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
         al_destroy_font(avenir20);
-        al_destroy_sample(musiquita);
+        al_destroy_bitmap(icono);        
+        for(int i= 0; i <= CANTTEXTURAS; i++){
+            al_destroy_bitmap(textura[i]);
+        }
         return -1;
     }
-    click = al_load_sample("resources/music/click_sound.wav");
-    if(!click){
+    click = al_load_sample("resources/music/click_sound.wav"); //Cargo el sonido de click
+    if(!click){                                                //Si ocurre un problema, destruyo todos los punteros anteriores y termina el programa
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar los sonidos", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
         al_destroy_font(avenir20);
         al_destroy_sample(musiquita);
-        al_destroy_sample(click);
+        al_destroy_bitmap(icono); 
+        for(int i= 0; i <= CANTTEXTURAS; i++){
+            al_destroy_bitmap(textura[i]);
+        }
         return -1;
     }
     
-    if (!al_install_keyboard()) {
-        al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar el teclado", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+    colaEventos = al_create_event_queue();  //genero mi cola de eventos
+    if (!colaEventos) {//Si ocurre un problema, destruyo todos los punteros anteriores y termina el programa
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al generar cola de eventos", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
         al_destroy_font(avenir20);
         al_destroy_sample(musiquita);
         al_destroy_sample(click);
+        al_destroy_bitmap(icono);
+        for(int i= 0; i <= CANTTEXTURAS; i++){
+            al_destroy_bitmap(textura[i]);
+        }
         return -1;
     }
+    
+    
+    timer = al_create_timer(1);     //Genero mi timer para el parpadeo
+    if (!timer) {                   //Si ocurre un problema, destruyo todos los punteros anteriores y termina el programa
+        al_show_native_message_box(disp, "Error", "ERROR", "Error al generar cola de eventos", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        al_destroy_display(disp);
+        al_destroy_font(avenir20);
+        al_destroy_sample(musiquita);
+        al_destroy_sample(click);
+        al_destroy_bitmap(icono);
+        for(int i= 0; i <= CANTTEXTURAS; i++){
+            al_destroy_bitmap(textura[i]);
+        }
+    }
+    /*Inicializo un mixer default para permitir reproducir la musica con mayor facilidad*/
     reproductor = al_create_sample_instance(musiquita);
     al_attach_sample_instance_to_mixer(reproductor, al_get_default_mixer());
     
-    event_queue = al_create_event_queue();
-    if (!event_queue) {
-        al_show_native_message_box(disp, "Error", "ERROR", "Error al generar cola de eventos", NULL, ALLEGRO_MESSAGEBOX_ERROR);
-        return -1;
-    }
-    
-    timer = al_create_timer(1);
-    
-    al_register_event_source(event_queue, al_get_display_event_source(disp));
-    al_register_event_source(event_queue, al_get_keyboard_event_source());
-    al_register_event_source(event_queue, al_get_mouse_event_source());
-    al_register_event_source(event_queue, al_get_timer_event_source(timer));
-    ALLEGRO_EVENT ev;
-    
-    int do_exit = 0;
+    al_register_event_source(colaEventos, al_get_display_event_source(disp));
+    al_register_event_source(colaEventos, al_get_keyboard_event_source());
+    al_register_event_source(colaEventos, al_get_mouse_event_source());
+    al_register_event_source(colaEventos, al_get_timer_event_source(timer));
 
     while (!do_exit) {
 
-        actualizarDisplay(textura, disp, avenir20, reproductor);
+        actualizarDisplay(textura, disp, avenir20, reproductor);   //Actualizo el display antes de esperar el proximo evento
         
-        al_wait_for_event(event_queue, &ev); //Toma un evento de la cola, VER RETURN EN DOCUMENT.
+        al_wait_for_event(colaEventos, &evento); //Espera que ocurra un evento
         accion = 0;
-        switch(ev.type){
+        switch(evento.type){                    //Se evalua el evento ocurrido y se actua acordemente
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 do_exit = 1;
                 break;
             case ALLEGRO_EVENT_KEY_DOWN:
-                accion=keyboardChanges (false, ev.keyboard.keycode);
+                accion=keyboardChanges (false, evento.keyboard.keycode);
                 break;
             case ALLEGRO_EVENT_KEY_UP:   
-                keyboardChanges (true, ev.keyboard.keycode);
+                keyboardChanges (true, evento.keyboard.keycode);
                 break;
             case ALLEGRO_EVENT_TIMER:
                 if(wordGet(PUERTOD) == 0){
@@ -154,12 +189,12 @@ int main(int argc, char** argv) {
                 al_play_sample(click, 2, 0 ,1 , ALLEGRO_PLAYMODE_ONCE, NULL);
                 break;
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
-                if ( ev.mouse.button & 1){   //Solo si se presiono el click izquierdo
-                    accion = mouseChanges(ev.mouse.x, ev.mouse.y);
+                if ( evento.mouse.button & 1){   //Solo si se presiono el click izquierdo
+                    accion = mouseChanges(evento.mouse.x, evento.mouse.y);
                 }
                 break;
         }
-        if (accion == 1 && wordGet(PUERTOD)){
+        if (accion == 1 && wordGet(PUERTOD)){       //Si se presiona P, las funciones de entrada devuelven un 1, que indica parpadeo
                     
             if(al_get_timer_started(timer)){
                 al_stop_timer(timer);
@@ -171,16 +206,16 @@ int main(int argc, char** argv) {
                 mascara = mascara & wordGet(PUERTOD);
             }        
         }
-        else if(accion == 2){
+        else if(accion == 2){                       //Si se presiona Q, las funciones de entrada devuelven un 2, que indica salida
             do_exit = 1;
         }
         mascara = mascara | wordGet(PUERTOD);
         
     }
-    
+    /*Destruyo todas las estructuras que lo requieren*/
     al_destroy_font(avenir20);
     al_destroy_display(disp);
-    al_destroy_event_queue(event_queue);
+    al_destroy_event_queue(colaEventos);
     al_destroy_timer(timer);
     al_destroy_sample(musiquita);
     al_destroy_sample(click);
@@ -196,41 +231,41 @@ int inicializarAllegro(ALLEGRO_DISPLAY* disp){
     
     int salida = 0;
     
-    if(!al_init_image_addon())
+    if(!al_init_image_addon())     //Inicializo el addon para manejo de imagenes, en caso de error muestro un mensaje
     {
         al_show_native_message_box(disp, "Error", "ERROR", "Error al iniciar addon de imagenes", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
     }
     
-    if(!al_init_font_addon())
+    if(!al_init_font_addon())       //Inicializo el addon para manejo de fuentes, en caso de error muestro un mensaje
     {
         al_show_native_message_box(disp, "Error", "ERROR", "Error al iniciar addon fuentes", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
     }
     
-    if(!al_init_ttf_addon())
+    if(!al_init_ttf_addon())       //Inicializo el addon para manejo de archivos .ttf de fuentes, en caso de error muestro un mensaje
     {
         al_show_native_message_box(disp, "Error", "ERROR", "Error al iniciar addon de lectura de fuentes", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
     }
     
-    if(!al_init_acodec_addon())
+    if(!al_init_acodec_addon())       //Inicializo el addon para manejo de archivos de audio, en caso de error muestro un mensaje
     {
         al_show_native_message_box(disp, "Error", "ERROR", "Error al iniciar addon de codec de audio", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
     }
     
-    if (!al_install_keyboard()) {
+    if (!al_install_keyboard()) {       //Inicializo el teclado, en caso de error muestro un mensaje
         al_show_native_message_box(disp, "Error", "ERROR", "Error al instalar el teclado", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
     }
     
-    if (!al_install_mouse()) {
+    if (!al_install_mouse()) {          //Inicializo el mouse, en caso de error muestro un mensaje
         al_show_native_message_box(disp, "Error", "ERROR", "Error al instalar el mouse", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
     }
      
-    if (!al_install_audio()) {
+    if (!al_install_audio()) {          //Inicializo el audio, en caso de error muestro un mensaje
         al_show_native_message_box(disp, "Error", "ERROR", "Error al instalar el audio", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         salida = 1;
     }
@@ -260,26 +295,25 @@ int cargarImagenes(ALLEGRO_BITMAP *textura[]){
     return error;
 }
 
-
 void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor){
     
-    al_clear_to_color(al_map_rgb(181, 224, 186));
+    al_clear_to_color(al_map_rgb(181, 224, 186));               //Pinto el fondo color verde bonito
     
-    al_draw_bitmap(textura[CIRCUITO], CIRCUITOX, CIRCUITOY, 0);
+    al_draw_bitmap(textura[CIRCUITO], CIRCUITOX, CIRCUITOY, 0); //Dibujo la imagen del circuito segun las coordenadas seteadas en constantes
 
-    al_draw_bitmap(textura[BITS_BUTTONS], BOTONBITSX, BOTONBITSY, 0);
+    al_draw_bitmap(textura[BITS_BUTTONS], BOTONBITSX, BOTONBITSY, 0);   //dibujado de la barra de botones de control de bits
     
-    al_draw_bitmap(textura[C_BUTTON], BOTONCX, BOTONCY, 0);
+    al_draw_bitmap(textura[C_BUTTON], BOTONCX, BOTONCY, 0);     //Dibujo el boton C para apagar los leds
     
-    al_draw_bitmap(textura[E_BUTTON], BOTONCX, BOTONCY + DISTYBOTONESCE, 0);
+    al_draw_bitmap(textura[E_BUTTON], BOTONCX, BOTONCY + DISTYBOTONESCE, 0);  //Dibujo el boton E para encender los leds
     
-    al_draw_bitmap(textura[P_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY, 0);
+    al_draw_bitmap(textura[P_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY, 0);  //Dibujo el boton P para comenzar el parpadeo
             
-    al_draw_bitmap(textura[I_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY + DISTYBOTONESCE, 0);
+    al_draw_bitmap(textura[I_BUTTON], BOTONCX + DISTXBOTONESCE, BOTONCY + DISTYBOTONESCE, 0);  //Dibujo el boton I para hacer un toggle a los leds
     
-    al_draw_bitmap(textura[Q_BUTTON], al_get_display_width(disp) - DISTYBOTONESCE, 10, 0);
+    al_draw_bitmap(textura[Q_BUTTON], al_get_display_width(disp) - DISTYBOTONESCE, 10, 0);  //Dibujo el boton Qpara salir del programa
     
-    
+    /*Escribo el texto para los botones*/
     al_draw_text(font, al_map_rgb(0, 0, 0), BOTONCX + ANCHOBOTC + 10, BOTONCY + 9, 0, "Apagar");
     
     al_draw_text(font, al_map_rgb(0, 0, 0), BOTONCX + ANCHOBOTC + 10, BOTONCY + DISTYBOTONESCE + 9, 0, "Encender");
@@ -288,15 +322,16 @@ void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
     
     al_draw_text(font, al_map_rgb(0, 0, 0), BOTONCX + DISTXBOTONESCE + ANCHOBOTC + 10, BOTONCY + DISTYBOTONESCE + 9, 0, "Invertir");
     
-    if (getSelectedPort() == PUERTOA){
-        al_draw_bitmap(textura[PORTA_BUTTON_P],PUERTOAX, PUERTOAY, 0);
+    if (getSelectedPort() == PUERTOA){              //De acuerdo al puerto seleccionado dibujo los botones de puerto A y puerto B segun corresponda
+        al_draw_bitmap(textura[PORTA_BUTTON_P],PUERTOAX, PUERTOAY, 0);                  //Puerto A presionado
         al_draw_bitmap(textura[PORTB_BUTTON_NP], PUERTOAX + ANCHOPUERTOA, PUERTOAY, 0);
     }
     else if (getSelectedPort() == PUERTOB){
-        al_draw_bitmap(textura[PORTA_BUTTON_NP],PUERTOAX, PUERTOAY, 0);
+        al_draw_bitmap(textura[PORTA_BUTTON_NP],PUERTOAX, PUERTOAY, 0);                 //Puerto B presionado
         al_draw_bitmap(textura[PORTB_BUTTON_P], PUERTOAX + ANCHOPUERTOA, PUERTOAY, 0);
     }
-    
+    /*Tomo el valor del puerto D del modulo emulaador, y de acuerdo a los valores de los bits 
+     dibujo los leds encendidos o apagados segun corresponda*/
     uint16_t puerto = wordGet(PUERTOD);
     
     for (int i = 0; i < 16; i++){
@@ -306,7 +341,7 @@ void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
         }
         puerto /= 2;
     }
-    
+    /*Segun si el programa se encuentra muteado dibujo el boton de muteo o desmuteo segun corresponda*/
     if(getMute() == 1){
         al_draw_bitmap(textura[18], SOUNDICNX, SOUNDICNY, 0);
         al_set_sample_instance_playing(reproductor, false);
@@ -317,5 +352,5 @@ void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
         al_set_sample_instance_playing(reproductor, true);
     }
     
-    al_flip_display();
+    al_flip_display();    //Doy vuelta el display mostrando el backbuffer que se dibujo con las actualizaciones
 }

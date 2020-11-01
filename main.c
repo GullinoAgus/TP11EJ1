@@ -187,17 +187,21 @@ int main(int argc, char** argv) {
                 
             case ALLEGRO_EVENT_TIMER:
                     
-                if(wordGet(PUERTOD) == 0 && !apagado){
-                    apagado = 0;
-                    mascara = mascara & wordGet(PUERTOD);
-                    maskOn(PUERTOD, mascara);
+                
+                if(mascara < (mascara|wordGet(PUERTOD)) || mascara == wordGet(PUERTOD)){
+                   mascara = mascara|wordGet(PUERTOD);
+                   
+                   
                 }
-                else{
-                    apagado = 1;
-                    mascara = mascara | wordGet(PUERTOD);
-                    maskOff(PUERTOD, 0xFFFF);
+                else if((mascara != mascara & ~(mascara ^ wordGet(PUERTOD))) && !apagado){
+                    mascara = mascara & ~(mascara ^ wordGet(PUERTOD));
+                  
                 }
+                
+                // maskOn(PUERTOD, mascara);
+                // maskOff(PUERTOD, 0xFFFF); 
                 break;
+                
                 
             case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
                

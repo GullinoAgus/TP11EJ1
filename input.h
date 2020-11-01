@@ -66,10 +66,10 @@ KEY_Q, KEY_E, KEY_P, KEY_C, KEY_I, KEY_A, KEY_B
 
 int mouseChanges(bool estado, int evMouseX, int evMouseY);
 /**
- * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
- * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
- * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
- * @return valor del bit solicitado
+ * @brief mouseChanges es la funcion encargada de procesar la informacion que viene del mouse, para saber detectar cual de las teclas se presiono 
+ * @param evMouseX, es la coordenada del mouse en el eje X del momento que se clickeo
+ * @param evMouseY, es la coordenada del mouse en el eje Y del momento que se clickeo
+ * @return retorna 1 si se presiono la tecla P , retorna 2 si se presiono la tecla Q, y retorna 0 en cualquier otro caso
 */
 int keyboardChanges (bool estado, int tecla);
 /**

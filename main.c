@@ -25,9 +25,9 @@ int cargarImagenes(ALLEGRO_BITMAP *textura[]);
 /*Inicializacion de todos los componentes necesarios del programa*/
 int inicializarAllegro();
 /*Funcion que actualiza el display de acuerdo a la informacion que leea del puerto en el emulador*/
-void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor);
+void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor, ALLEGRO_TIMER* timer);
 
-int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP);
+int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP, int estadoParpadeo);
 
 int main(int argc, char** argv) {
 
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     int do_exit = 0;        //Variable para salida de loop
     uint16_t mascara = 0;   //mascara para controlar el parpadeo
     int accion = 0;         //Variable para evaluar la accion a realizar segun la entrada
-    int apagado = 0;
+    int estadoParpadeo = 0;
     
     //Inicializamos los addon
     if(inicializarAllegro() == 1){
@@ -178,7 +178,7 @@ int main(int argc, char** argv) {
                 
             case ALLEGRO_EVENT_KEY_DOWN:
                 accion = keyboardChanges (PRESSED, evento.keyboard.keycode);
-                do_exit = actionHandler(accion, &mascara, timer);
+                do_exit = actionHandler(accion, &mascara, timer, estadoParpadeo);
                 break;
                 
             case ALLEGRO_EVENT_KEY_UP:   
@@ -186,31 +186,22 @@ int main(int argc, char** argv) {
                 break;
                 
             case ALLEGRO_EVENT_TIMER:
-                    
-                
-                if(mascara < (mascara|wordGet(PUERTOD)) || mascara == wordGet(PUERTOD)){
-                   mascara = mascara|wordGet(PUERTOD);
-                   
-                   
+                if(estadoParpadeo){
+                    maskOn(PUERTOD, mascara);
+                    estadoParpadeo = 0;
                 }
-                else if((mascara != mascara & ~(mascara ^ wordGet(PUERTOD))) && !apagado){
-                    mascara = mascara & ~(mascara ^ wordGet(PUERTOD));
-                  
+                else{
+                    maskOff(PUERTOD, 0xFFFF);
+                    estadoParpadeo = 1;
                 }
-                
-                // maskOn(PUERTOD, mascara);
-                // maskOff(PUERTOD, 0xFFFF); 
                 break;
-                
-                
+
             case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-               
                 if ( evento.mouse.button & 1){   //Solo si se presiono el click izquierdo
                     al_play_sample(click, 2, 0 ,1 , ALLEGRO_PLAYMODE_ONCE, NULL);
+                    accion = mouseChanges(PRESSED, evento.mouse.x, evento.mouse.y);
+                    do_exit = actionHandler(accion, &mascara, timer, estadoParpadeo);
                 }
-                
-                accion = mouseChanges(PRESSED, evento.mouse.x, evento.mouse.y);
-                do_exit = actionHandler(accion, &mascara, timer);
                 break;
                 
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
@@ -219,9 +210,14 @@ int main(int argc, char** argv) {
                 }
                 break;
         }
-        
-        actualizarDisplay(textura, disp, avenir20, reproductor);   //Actualizo el display antes de esperar el proximo evento
-
+        if(estadoParpadeo){
+            mascara = mascara^wordGet(PUERTOD);
+            maskOff(PUERTOD, 0xFFFF);
+        }
+        else {
+            mascara = wordGet(PUERTOD);
+        }
+        actualizarDisplay(textura, disp, avenir20, reproductor, timer);   //Actualizo el display antes de esperar el proximo evento
     }
     /*Destruyo todas las estructuras que lo requieren*/
     al_destroy_font(avenir20);
@@ -238,7 +234,7 @@ int main(int argc, char** argv) {
     return (EXIT_SUCCESS);
 }
 
-int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP){
+int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP, int estadoParpadeo){
     
     int exit = 0;
     
@@ -249,11 +245,20 @@ int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP){
         }
         else{
             al_start_timer(timerP);
-            *mascara = wordGet(PUERTOD);
         }
     }
     else if(action == 2){
         exit = 1;
+    }
+    else if((al_get_timer_started(timerP)) && estadoParpadeo && (getKeyState(KEY_E) == PRESSED) ){
+
+        maskOff(getSelectedPort(), ((getSelectedPort()==PUERTOB) ? *mascara : *mascara >> 8));
+    }
+    else if((al_get_timer_started(timerP)) && (getKeyState(KEY_C) == PRESSED)){
+        *mascara = *mascara & ((getSelectedPort()==PUERTOA) ? 0x00FF : 0xFF00);
+    }
+    else if((al_get_timer_started(timerP)) && (getKeyState(KEY_I) == PRESSED)){
+        maskOn(getSelectedPort(), ((getSelectedPort()==PUERTOB) ? 0x00FF : 0xFF00));
     }
     
     return exit;
@@ -327,7 +332,7 @@ int cargarImagenes(ALLEGRO_BITMAP *textura[]){
     return error;
 }
 
-void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor){
+void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor, ALLEGRO_TIMER* timer){
     
     al_clear_to_color(al_map_rgb(181, 224, 186));               //Pinto el fondo color verde bonito
     
@@ -353,7 +358,7 @@ void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
     }
     
     
-    if(getKeyState(KEY_P) == PRESSED){
+    if(getKeyState(KEY_P) == PRESSED || al_get_timer_started(timer)){
         al_draw_bitmap(textura[P_BUTTON_PRESSED], BOTONCX + DISTXBOTONESCE, BOTONCY, 0);  //Dibujo el boton P para comenzar el parpadeo
     }
     else{

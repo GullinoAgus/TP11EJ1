@@ -133,99 +133,99 @@ int keyboardChanges (bool estado, int tecla){
     
     int salida = 0;
     
-    if(estado == PRESSED) {
+    if(estado == PRESSED) { // if analizando si la tecla fue presionada
         switch(tecla) {
-            case ALLEGRO_KEY_0:
+            case ALLEGRO_KEY_0: // se presiona la tecla 0 y se cambia el estado del b0
                 if(key_pressed[KEY_0] == NOPRESSED)
                     bitToggle(puertoSeleccionado,0);
                 key_pressed[KEY_0] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_1:
+            case ALLEGRO_KEY_1: // se presiona la tecla 1 y se cambia el estado del b1
                 if(key_pressed[KEY_1] == NOPRESSED)
                     bitToggle(puertoSeleccionado,1);
                 key_pressed[KEY_1] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_2:
+            case ALLEGRO_KEY_2: // se presiona la tecla 2 y se cambia el estado del b2
                 if(key_pressed[KEY_2] == NOPRESSED)
                     bitToggle(puertoSeleccionado,2);
                 key_pressed[KEY_2] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_3:
+            case ALLEGRO_KEY_3: // se presiona la tecla 3 y se cambia el estado del b3
                 if(key_pressed[KEY_3] == NOPRESSED)
                     bitToggle(puertoSeleccionado,3);
                 key_pressed[KEY_3] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_4:
+            case ALLEGRO_KEY_4: // se presiona la tecla 4 y se cambia el estado del b4
                 if(key_pressed[KEY_4] == NOPRESSED)
                     bitToggle(puertoSeleccionado,4);
                 key_pressed[KEY_4] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_5:
+            case ALLEGRO_KEY_5: // se presiona la tecla 5 y se cambia el estado del b5
                 if(key_pressed[KEY_5] == NOPRESSED)
                     bitToggle(puertoSeleccionado,5);
                 key_pressed[KEY_5] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_6:
+            case ALLEGRO_KEY_6: // se presiona la tecla 6 y se cambia el estado del b6
                 if(key_pressed[KEY_6] == NOPRESSED)
                     bitToggle(puertoSeleccionado,6);
                 key_pressed[KEY_6] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_7:
+            case ALLEGRO_KEY_7: // se presiona la tecla 7 y se cambia el estado del b7
                 if(key_pressed[KEY_7] == NOPRESSED)
                     bitToggle(puertoSeleccionado,7);
                 key_pressed[KEY_7] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_Q:
+            case ALLEGRO_KEY_Q: // se presiona la tecla Q y se avisa que se debe cerrar el programa
                 if(key_pressed[KEY_Q] == NOPRESSED)
                     salida = 2;
                 key_pressed[KEY_Q] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_E:
+            case ALLEGRO_KEY_E: // se presiona la tecla 0 y se encienden todos los bits del puerto
                 if(key_pressed[KEY_E] == NOPRESSED)
                     maskOn(puertoSeleccionado,255);
                 key_pressed[KEY_E] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_P:
+            case ALLEGRO_KEY_P: // se presiona la tecla 0 y se avisa que se debe comenzar a parpadear
                 key_pressed[KEY_P] = PRESSED;
                 salida = 1;
                 break;
 
-            case ALLEGRO_KEY_C:
+            case ALLEGRO_KEY_C: // se presiona la tecla 0 y se apagan todos los bits del puerto
                 if(key_pressed[KEY_C] == NOPRESSED)
                     maskOff(puertoSeleccionado,255);
                 key_pressed[KEY_C] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_I:
+            case ALLEGRO_KEY_I: // se presiona la tecla 0 y se invierten todos los bits del puerto
                 if(key_pressed[KEY_I] == NOPRESSED)
                     maskToggle(puertoSeleccionado,255);
                 key_pressed[KEY_I] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_A:
+            case ALLEGRO_KEY_A: // se presiona la tecla 0 y se activa el puerto A
                 if(key_pressed[KEY_A] == NOPRESSED)
                     setSelectedPort(PUERTOA);
                 key_pressed[KEY_A] = PRESSED;
                 break;
 
-            case ALLEGRO_KEY_B:
+            case ALLEGRO_KEY_B: // se presiona la tecla 0 y se activa el puerto B
                 if(key_pressed[KEY_B] == NOPRESSED)
                     setSelectedPort(PUERTOB);
                 key_pressed[KEY_B] = PRESSED;
                 break;
         }
     }
-    else {
+    else {  //en caso de que no se haya presionado una tecla se actualizan los estados de las mismas
  
         for(int i = KEY_0; i <= KEY_B; i++)
         {

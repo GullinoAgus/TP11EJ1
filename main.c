@@ -46,7 +46,8 @@ int main(int argc, char** argv) {
     int do_exit = 0;        //Variable para salida de loop
     uint16_t mascara = 0;   //mascara para controlar el parpadeo
     int accion = 0;         //Variable para evaluar la accion a realizar segun la entrada
-   
+    int apagado = 0;
+    
     //Inicializamos los addon
     if(inicializarAllegro() == 1){
         al_destroy_font(avenir20);
@@ -186,12 +187,15 @@ int main(int argc, char** argv) {
                 
             case ALLEGRO_EVENT_TIMER:
                     
-                if(wordGet(PUERTOD) == 0){
+                if(wordGet(PUERTOD) == 0 && !apagado){
+                    apagado = 0;
+                    mascara = mascara & wordGet(PUERTOD);
                     maskOn(PUERTOD, mascara);
                 }
                 else{
+                    apagado = 1;
                     mascara = mascara | wordGet(PUERTOD);
-                    maskOff(PUERTOD, 65535);
+                    maskOff(PUERTOD, 0xFFFF);
                 }
                 break;
                 

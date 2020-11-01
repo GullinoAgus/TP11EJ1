@@ -73,41 +73,40 @@ int mouseChanges(bool estado, int evMouseX, int evMouseY);
 */
 int keyboardChanges (bool estado, int tecla);
 /**
- * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
- * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
- * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
- * @return valor del bit solicitado
+ * @brief keyboardChanges es la funcion encargada de manejar los eventos de teclado y realizar las acciones correspondientes
+ * @param estado, es el estado de la tecla: PRESSED o NOPRESSED
+ * @param tecla, es el evento de teclado correspondiente a una tecla en particular
+ * @return retorna 2 si se presionó la tecla Q, retorna 1 si se presionó la tecla P, en cualquier otro caso retorna 0.
 */
 void setSelectedPort(char puerto);
 /**
- * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
- * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
- * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
- * @return valor del bit solicitado
+ * @brief setSelectedPort cambia el puerto principal sobre el que se realizan cambios
+ * @param  puerto, es el nuevo puerto a seleccionar
+ * @return no se devuelve ningun parametro
 */
 char getSelectedPort(void);
 /**
- * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
- * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
- * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
- * @return valor del bit solicitado
+ * @brief getSelectedPort devuelve el nombre del puerto principal sobre el que se realizan cambios
+ * @return devuelve el nobre del puerto: PUERTOA o PUERTOB
 */
 void setMute(bool modo);
 /**
- * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
- * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
- * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
- * @return valor del bit solicitado
+ * @brief 
+ * @param 
+ * @return 
 */
 bool getMute(void);
 /**
- * @brief bitGet Devuelve el valor del bit del puerto que se pase. Si alguno de los parametros es invalido devuelve 0xFF
- * @param puerto el puerto del cual se desee saber el valor del bit como caracter mayuscula A, B o D. A y B 8bits, D(A+B) 16bits
- * @param bit el numero del bit a saber. 0-7 para los puertos A y B, 0-15 para el puerto D
- * @return valor del bit solicitado
+ * @brief 
+ * @return 
 */
 
 bool getKeyState(int boton);
+/**
+ * @brief getKeyState devuelve esl estado actual de una tecla
+ * @param boton, tecla de la que se quiere saber el estado (KEY_1, etc.)
+ * @return devuelve el estado de la tecla: PRESSED o NOPRESSED
+*/
 
 #endif /* INPUT_H */
 

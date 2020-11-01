@@ -22,7 +22,7 @@
 
 #define PRESSED 1
 #define NOPRESSED 0
-#define CANTTEXTURAS 23
+#define CANTTEXTURAS 24
 
 #define CIRCUITOX 20
 #define CIRCUITOY 90

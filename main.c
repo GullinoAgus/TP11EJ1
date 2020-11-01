@@ -25,7 +25,7 @@ int cargarImagenes(ALLEGRO_BITMAP *textura[]);
 /*Inicializacion de todos los componentes necesarios del programa*/
 int inicializarAllegro();
 /*Funcion que actualiza el display de acuerdo a la informacion que leea del puerto en el emulador*/
-void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor, ALLEGRO_TIMER* timerP);
+void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor);
 
 int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP);
 
@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
         al_show_native_message_box(disp, "Error", "ERROR", "Error al cargar las fuentes", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);
         al_destroy_bitmap(icono);
-        for(int i= 0; i <= CANTTEXTURAS; i++){
+        for(int i= 0; i < CANTTEXTURAS; i++){
             al_destroy_bitmap(textura[i]);
         }
         return -1;
@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
         al_destroy_display(disp);
         al_destroy_font(avenir20);
         al_destroy_bitmap(icono);        
-        for(int i= 0; i <= CANTTEXTURAS; i++){
+        for(int i= 0; i < CANTTEXTURAS; i++){
             al_destroy_bitmap(textura[i]);
         }
         return -1;
@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
         al_destroy_font(avenir20);
         al_destroy_sample(musiquita);
         al_destroy_bitmap(icono); 
-        for(int i= 0; i <= CANTTEXTURAS; i++){
+        for(int i= 0; i < CANTTEXTURAS; i++){
             al_destroy_bitmap(textura[i]);
         }
         return -1;
@@ -136,7 +136,7 @@ int main(int argc, char** argv) {
         al_destroy_sample(musiquita);
         al_destroy_sample(click);
         al_destroy_bitmap(icono);
-        for(int i= 0; i <= CANTTEXTURAS; i++){
+        for(int i= 0; i < CANTTEXTURAS; i++){
             al_destroy_bitmap(textura[i]);
         }
         return -1;
@@ -151,7 +151,7 @@ int main(int argc, char** argv) {
         al_destroy_sample(musiquita);
         al_destroy_sample(click);
         al_destroy_bitmap(icono);
-        for(int i= 0; i <= CANTTEXTURAS; i++){
+        for(int i= 0; i < CANTTEXTURAS; i++){
             al_destroy_bitmap(textura[i]);
         }
     }
@@ -212,7 +212,7 @@ int main(int argc, char** argv) {
                 break;
         }
         
-        actualizarDisplay(textura, disp, avenir20, reproductor, timer);   //Actualizo el display antes de esperar el proximo evento
+        actualizarDisplay(textura, disp, avenir20, reproductor);   //Actualizo el display antes de esperar el proximo evento
 
     }
     /*Destruyo todas las estructuras que lo requieren*/
@@ -223,7 +223,7 @@ int main(int argc, char** argv) {
     al_destroy_sample(musiquita);
     al_destroy_sample(click);
     al_destroy_bitmap(icono);
-    for(int i= 0; i <= CANTTEXTURAS; i++){
+    for(int i= 0; i < CANTTEXTURAS; i++){
         al_destroy_bitmap(textura[i]);
     }
     
@@ -304,7 +304,7 @@ int cargarImagenes(ALLEGRO_BITMAP *textura[]){
     char rutaEfectiva[30];
     int error = 0;
     
-    for(int i = 0; !error && i <= CANTTEXTURAS; i++){
+    for(int i = 0; !error && i < CANTTEXTURAS; i++){
         
         int size = sprintf(rutaEfectiva, "resources/textures/%d.png", i);
         textura[i] = al_load_bitmap(rutaEfectiva);
@@ -319,7 +319,7 @@ int cargarImagenes(ALLEGRO_BITMAP *textura[]){
     return error;
 }
 
-void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor, ALLEGRO_TIMER* timerP){
+void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor){
     
     al_clear_to_color(al_map_rgb(181, 224, 186));               //Pinto el fondo color verde bonito
     
@@ -392,8 +392,7 @@ void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO
      dibujo los leds encendidos o apagados segun corresponda*/
     uint16_t puerto = wordGet(PUERTOD);
     
-    //!al_get_timer_started(timerP)
-    for (int i = 0; 1  && i < 16; i++){
+    for (int i = 0; i < 16; i++){
         if(puerto%2 == 1){
             al_draw_bitmap(textura[GREEN_LED],LEDSUPX + CIRCUITOX, LEDSUPY + i*LEDSIZE + CIRCUITOY, 0);
             al_draw_bitmap(textura[MICRO_YELLOW_LED], MINILEDSUPDERX + CIRCUITOX, MINILEDSUPDERY + i*MINILEDSIZE + CIRCUITOY, 0);

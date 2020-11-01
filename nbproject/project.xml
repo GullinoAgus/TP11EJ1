@@ -12,6 +12,8 @@
             <sourceRootList>
                 <sourceRootElem>resources</sourceRootElem>
                 <sourceRootElem>textures</sourceRootElem>
+                <sourceRootElem>resources</sourceRootElem>
+                <sourceRootElem>textures</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

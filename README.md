@@ -29,3 +29,5 @@ La estructura del micro en la imagen esta descrita por el siguiente arte ascii
                
 Para el caso del parpadeo, este responde a cualquier comando. El parpadeo se puede ver como una bandera que se levanta cuando se presiona el boton, y para bajarla hay que volverla a presiona, el estado de la bandera se ve en el boton. El parpadeo esta seteado para 1 segundo, pero con una constante de compilacion en el main.c se puede modificar.
 Todos los pixel arts fueron dibujados por nuestro compañero gonzalo *Aplausos* muy bonitos.
+
+Si de casualidad encontras algun bug, lo cual espero que no pase, pido piedad, quisimos hacer alta interfaz y salio muy bien, pero en una semana no llegamos a probar absolutamente todos los casos limites. Con suerto somos buenos programadores y el codigo no tiene problemas. Saludos y Kudos

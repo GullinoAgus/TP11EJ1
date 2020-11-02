@@ -14,7 +14,7 @@
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
 
-
+//Enumeracion de las IDs para las texturas
 enum textura_id {CIRCUITO = 0, Q_BUTTON, E_BUTTON, I_BUTTON, P_BUTTON, C_BUTTON, BITS_BUTTONS, BLUE_LED, YELLOW_LED, 
                  GREEN_LED, PORTA_BUTTON_NP, PORTA_BUTTON_P, PORTB_BUTTON_NP, PORTB_BUTTON_P, MICRO_BLUE_LED,
                  MICRO_RED_LED, MICRO_YELLOW_LED, SOUND_ON, SOUND_OFF, Q_BUTTON_PRESSED, E_BUTTON_PRESSED, I_BUTTON_PRESSED, 
@@ -26,7 +26,7 @@ int cargarImagenes(ALLEGRO_BITMAP *textura[]);
 int inicializarAllegro();
 /*Funcion que actualiza el display de acuerdo a la informacion que leea del puerto en el emulador*/
 void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor, ALLEGRO_TIMER* timer);
-
+/*Funcion para manejar las acciones especiales solicitadas por el usuario, eneste caso es el parpadeo y la salida del programa*/
 int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP, int estadoParpadeo);
 
 int main(int argc, char** argv) {
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     int do_exit = 0;        //Variable para salida de loop
     uint16_t mascara = 0;   //mascara para controlar el parpadeo
     int accion = 0;         //Variable para evaluar la accion a realizar segun la entrada
-    int estadoParpadeo = 0;
+    int estadoParpadeo = 0; //Variable para seguir el estado del parpadeo, durante el parpadeo 0 indica encendido y 1 apagado
     
     //Inicializamos los addon
     if(inicializarAllegro() == 1){
@@ -160,7 +160,7 @@ int main(int argc, char** argv) {
     /*Inicializo un mixer default para permitir reproducir la musica con mayor facilidad*/
     reproductor = al_create_sample_instance(musiquita);
     al_attach_sample_instance_to_mixer(reproductor, al_get_default_mixer());
-    
+    /*Registro de fuentes de eventos*/
     al_register_event_source(colaEventos, al_get_display_event_source(disp));
     al_register_event_source(colaEventos, al_get_keyboard_event_source());
     al_register_event_source(colaEventos, al_get_mouse_event_source());
@@ -210,7 +210,7 @@ int main(int argc, char** argv) {
                 }
                 break;
         }
-        if(estadoParpadeo){
+        if(estadoParpadeo){         //Actualizacion de la mascara que se utiliza en el parpadeo, se utiliza para controlas las actualizaciones del puerto mientras se titila
             mascara = mascara^wordGet(PUERTOD);
             maskOff(PUERTOD, 0xFFFF);
         }
@@ -238,7 +238,7 @@ int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP, int esta
     
     int exit = 0;
     
-    if(action == 1){
+    if(action == 1){     //en caso de haber seleccionado el parpadeo, se inicia o para el timer segun el momento en que se presione
         
         if(al_get_timer_started(timerP)){
             al_stop_timer(timerP);
@@ -247,17 +247,17 @@ int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP, int esta
             al_start_timer(timerP);
         }
     }
-    else if(action == 2){
+    else if(action == 2){   // Casos de salida
         exit = 1;
     }
-    else if((al_get_timer_started(timerP)) && estadoParpadeo && (getKeyState(KEY_E) == PRESSED) ){
-
+    /*Condiciones para correccion de efectos de botones cuando el timer esta contando*/
+    else if((al_get_timer_started(timerP)) && estadoParpadeo && (getKeyState(KEY_E) == PRESSED) ){ //correccion para encender
         maskOff(getSelectedPort(), ((getSelectedPort()==PUERTOB) ? *mascara : *mascara >> 8));
     }
-    else if((al_get_timer_started(timerP)) && (getKeyState(KEY_C) == PRESSED)){
+    else if((al_get_timer_started(timerP)) && (getKeyState(KEY_C) == PRESSED)){     //Correccion para apagar
         *mascara = *mascara & ((getSelectedPort()==PUERTOA) ? 0x00FF : 0xFF00);
     }
-    else if((al_get_timer_started(timerP)) && (getKeyState(KEY_I) == PRESSED)){
+    else if((al_get_timer_started(timerP)) && (getKeyState(KEY_I) == PRESSED)){     //Correccion para invertir
         maskOn(getSelectedPort(), ((getSelectedPort()==PUERTOB) ? 0x00FF : 0xFF00));
     }
     

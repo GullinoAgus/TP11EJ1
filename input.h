@@ -1,6 +1,6 @@
 /***************************************************************************//**
-  @file     +emulador.h+
-  @brief    +Header del modulo emulador de puerto de un microcontrolador.+
+  @file     +input.h+
+  @brief    +Header del modulo para recibir entrada para interfaz de emulador.+
   @author   +Grupo 1+
  ******************************************************************************/
 
@@ -23,7 +23,7 @@
 #define PRESSED 1
 #define NOPRESSED 0
 #define CANTTEXTURAS 24
-
+//Constantes para mapeo de botones en pantalla
 #define CIRCUITOX 20
 #define CIRCUITOY 90
 #define PUERTOAX 465
@@ -56,7 +56,7 @@
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-enum keys { KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7,
+enum keys { KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7,     //Estructura para codificar las teclas utilizadas
 KEY_Q, KEY_E, KEY_P, KEY_C, KEY_I, KEY_A, KEY_B  
 };
 
@@ -91,14 +91,13 @@ char getSelectedPort(void);
 */
 void setMute(bool modo);
 /**
- * @brief 
- * @param 
- * @return 
+ * @brief setMute Setea la constante que indica si el programa se encuentra muteado
+ * @param modo estado para setear el sonido. 1 muteado, 0 sonando
 */
 bool getMute(void);
 /**
- * @brief 
- * @return 
+ * @brief getMute Devuelve si el programa se encuentra muteado o no
+ * @return 1 si esta muteado, 0 si no lo esta
 */
 
 bool getKeyState(int boton);

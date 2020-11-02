@@ -14,6 +14,8 @@
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
 
+#define TIMERINTERVAL 1   //Intervalo de tiempo para el parpadeo
+
 //Enumeracion de las IDs para las texturas
 enum textura_id {CIRCUITO = 0, Q_BUTTON, E_BUTTON, I_BUTTON, P_BUTTON, C_BUTTON, BITS_BUTTONS, BLUE_LED, YELLOW_LED, 
                  GREEN_LED, PORTA_BUTTON_NP, PORTA_BUTTON_P, PORTB_BUTTON_NP, PORTB_BUTTON_P, MICRO_BLUE_LED,
@@ -144,7 +146,7 @@ int main(int argc, char** argv) {
     }
     
     
-    timer = al_create_timer(1);     //Genero mi timer para el parpadeo
+    timer = al_create_timer(TIMERINTERVAL);     //Genero mi timer para el parpadeo
     if (!timer) {                   //Si ocurre un problema, destruyo todos los punteros anteriores y termina el programa
         al_show_native_message_box(disp, "Error", "ERROR", "Error al generar cola de eventos", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(disp);

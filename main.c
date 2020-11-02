@@ -27,7 +27,7 @@ int inicializarAllegro();
 /*Funcion que actualiza el display de acuerdo a la informacion que leea del puerto en el emulador*/
 void actualizarDisplay(ALLEGRO_BITMAP* textura[], ALLEGRO_DISPLAY* disp, ALLEGRO_FONT* font, ALLEGRO_SAMPLE_INSTANCE* reproductor, ALLEGRO_TIMER* timer);
 /*Funcion para manejar las acciones especiales solicitadas por el usuario, eneste caso es el parpadeo y la salida del programa*/
-int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP, int estadoParpadeo);
+int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP, int* estadoParpadeo);
 
 int main(int argc, char** argv) {
 
@@ -178,7 +178,7 @@ int main(int argc, char** argv) {
                 
             case ALLEGRO_EVENT_KEY_DOWN:
                 accion = keyboardChanges (PRESSED, evento.keyboard.keycode);
-                do_exit = actionHandler(accion, &mascara, timer, estadoParpadeo);
+                do_exit = actionHandler(accion, &mascara, timer, &estadoParpadeo);
                 break;
                 
             case ALLEGRO_EVENT_KEY_UP:   
@@ -200,7 +200,7 @@ int main(int argc, char** argv) {
                 if ( evento.mouse.button & 1){   //Solo si se presiono el click izquierdo
                     al_play_sample(click, 2, 0 ,1 , ALLEGRO_PLAYMODE_ONCE, NULL);
                     accion = mouseChanges(PRESSED, evento.mouse.x, evento.mouse.y);
-                    do_exit = actionHandler(accion, &mascara, timer, estadoParpadeo);
+                    do_exit = actionHandler(accion, &mascara, timer, &estadoParpadeo);
                 }
                 break;
                 
@@ -234,7 +234,7 @@ int main(int argc, char** argv) {
     return (EXIT_SUCCESS);
 }
 
-int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP, int estadoParpadeo){
+int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP, int* estadoParpadeo){
     
     int exit = 0;
     
@@ -242,6 +242,8 @@ int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP, int esta
         
         if(al_get_timer_started(timerP)){
             al_stop_timer(timerP);
+            *estadoParpadeo = 0;
+            maskOn(PUERTOD, *mascara);
         }
         else{
             al_start_timer(timerP);
@@ -251,13 +253,13 @@ int actionHandler(int action, uint16_t* mascara, ALLEGRO_TIMER* timerP, int esta
         exit = 1;
     }
     /*Condiciones para correccion de efectos de botones cuando el timer esta contando*/
-    else if((al_get_timer_started(timerP)) && estadoParpadeo && (getKeyState(KEY_E) == PRESSED) ){ //correccion para encender
+    else if(al_get_timer_started(timerP) && *estadoParpadeo && (getKeyState(KEY_E) == PRESSED) ){ //correccion para encender
         maskOff(getSelectedPort(), ((getSelectedPort()==PUERTOB) ? *mascara : *mascara >> 8));
     }
-    else if((al_get_timer_started(timerP)) && (getKeyState(KEY_C) == PRESSED)){     //Correccion para apagar
+    else if(al_get_timer_started(timerP) && ((getKeyState(KEY_C) == PRESSED))){     //Correccion para apagar
         *mascara = *mascara & ((getSelectedPort()==PUERTOA) ? 0x00FF : 0xFF00);
     }
-    else if((al_get_timer_started(timerP)) && (getKeyState(KEY_I) == PRESSED)){     //Correccion para invertir
+    else if(al_get_timer_started(timerP) && *estadoParpadeo && ((getKeyState(KEY_I) == PRESSED))){     //Correccion para invertir
         maskOn(getSelectedPort(), ((getSelectedPort()==PUERTOB) ? 0x00FF : 0xFF00));
     }
     
